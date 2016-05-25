@@ -13,6 +13,7 @@
     "grunt-contrib-jshint": "^1.0.0",
     "gruntify-eslint": "^2.0.0",
     "istanbul": "^0.4.3",
+    "istanbul-middleware": "^0.2.2",
     "mocha": "^2.5.2",
     "rewire": "^2.5.1",
     "should": "^8.4.0"
