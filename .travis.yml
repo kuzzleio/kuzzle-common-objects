@@ -1,6 +1,6 @@
 sudo: required
-services:
-- docker
+install:
+- npm install
 script:
 - npm test
 notifications:
