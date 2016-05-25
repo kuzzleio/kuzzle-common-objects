@@ -1,7 +1,7 @@
 var
   _ = require('lodash'),
   util = require('util'),
-  InternalError = require.main.require('errors/internalError');
+  InternalError = require('../errors/internalError');
 
 function ResponseObject (requestObject, response) {
   this.data = null;
