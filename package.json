@@ -1,0 +1,28 @@
+{
+  "name": "kuzzle-common-objects",
+  "author": "The Kuzzle Team <support@kuzzle.io>",
+  "version": "1.0.0",
+  "dependencies": {
+    "lodash": "^4.13.1",
+    "node-uuid": "^1.4.7",
+    "q": "^1.4.1"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "async": "^2.0.0-rc.5",
+    "codecov": "^1.0.1",
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "gruntify-eslint": "^2.0.0",
+    "istanbul": "^0.4.3",
+    "istanbul-middleware": "^0.2.2",
+    "mocha": "^2.5.2",
+    "rewire": "^2.5.1",
+    "should": "^8.4.0"
+  },
+  "scripts": {
+    "test": "npm run unit-testing --coverage && grunt",
+    "unit-testing": "istanbul test _mocha",
+    "codecov": "cat ./coverage/lcov.info | ./node_modules/.bin/codecov"
+  }
+}
