@@ -1,7 +1,7 @@
 sudo: required
 language: node_js
 node_js:
-- '4.2.6'
+- 4.2.6
 install:
 - npm install
 script:
@@ -19,3 +19,11 @@ notifications:
     on_success: never
     on_failure: always
     on_start: never
+deploy:
+  provider: npm
+  email: support@kuzzle.io
+  api_key:
+    secure: tzU5/ZcnFO2L1C1NCY1hWs5D+sdJsYDbGUkrY5Cc5GxSqMf+u/gyBwnhbduW/QU99X7K57ya6WLiWjptc3ZgLVnO5T6zgs3Vk5boOoaxKoRe8MW0XebV1vlKTHCGGOeKvyWnVwpjb/M72v5s754cIRxotxN14QU6J9st6uk11QK25ezMtmaQSu9UQp/WnmMlFTD0D1H2iYEES/x4amoV+givtCLIRHKvBkur8P738GD7nwqQ7xfF5jtwHRv5yaF0+bsD8pvEywCuUY+H37Vzp3S+bAp3NxCaB4qbpzDaph9/JvLRYs6Sl4OSbj9Caah2Sjz4TKECXsYD0iOQUnoanc8+dij9C05zuG+BGAAKeL2H+GL7pGcMvpYUW6FMPRrUM5n6FONoJvna+81V5x5EemrDFYZHeGmC82PDqpxte1v7Wgj7rYxSPcu6RJ8PGNjkJecDhxhngyjgGfpK6n5L3ye0BGGEJldvU8Fk0kwu+irERXCz7/1AJY7cvuLINUA46GuhiM3+dJZDp5MuWsJh+GZJDWUJgbqA540PvQaxdtjOrr78Nj8gTgS3HEw/dWl+gtUXafQcuy01MNNQjRO1A8v8dPGjPjB6skLQHooKuTzLj45RP77azBCo/qX3x206Q/jwjkUkP6AXZC0DxF3ueOZDtZB+M71eVaWM7SMPgQI=
+  on:
+    repo: kuzzleio/kuzzle-common-objects
+    branch: master
