@@ -59,7 +59,7 @@ function construct (object, additionalData, protocol) {
     this.data.body = object.body;
   }
   else if (object.query !== undefined) {
-    this.data.body = object;
+    this.data.body = {query: object.query};
   }
   else {
     this.data.body = additionalData.body || additionalData;

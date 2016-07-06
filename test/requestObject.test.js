@@ -72,9 +72,9 @@ describe('Test: requestObject', function () {
 
     request.query = query;
     delete request.body;
-    requestObject = new RequestObject(request, { query: {bar: 'foo' }}, protocol);
+    requestObject = new RequestObject(request, { query: {bar: 'foo'} }, protocol);
 
-    should(requestObject.data).match(request);
+    should(requestObject.data).match({body: {query}});
   });
 
   it('should replace the entire data structure by the additional data if it contains a query member', function () {
@@ -85,7 +85,7 @@ describe('Test: requestObject', function () {
     delete request.body;
     requestObject = new RequestObject(request, additionalData, protocol);
 
-    should(requestObject.data).match(additionalData);
+    should(requestObject.data).match({body: additionalData});
   });
 
   it('should initialize the data.body structure with the additional data argument if none of the previous cases matches', function () {
