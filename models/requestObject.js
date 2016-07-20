@@ -1,9 +1,15 @@
 var
   BadRequestError = require('../errors/badRequestError'),
   uuid = require('node-uuid'),
-  q = require('q'),
+  Promise = require('bluebird'),
   _ = require('lodash');
 
+/**
+ * @param object
+ * @param additionalData
+ * @param protocol
+ * @constructor
+ */
 function RequestObject(object, additionalData, protocol) {
   this.data = {};
   this.metadata = {};
@@ -96,28 +102,26 @@ function construct (object, additionalData, protocol) {
 RequestObject.prototype.checkInformation = function () {
   // Test if the controller is well defined
   if (!this.controller) {
-    return q.reject(new BadRequestError('No controller provided for object'));
+    return Promise.reject(new BadRequestError('No controller provided for object'));
   }
 
   // Test if the action is well defined
   if (!this.action) {
-    return q.reject(new BadRequestError('No action provided for object'));
+    return Promise.reject(new BadRequestError('No action provided for object'));
   }
 
-  return q();
+  return Promise.resolve();
 };
 
 RequestObject.prototype.isValid = function () {
-  var deferred = q.defer();
+  return new Promise((resolve, reject) => {
+    // TODO: implement validation
+    if (this.data.body === undefined || _.isEmpty(this.data.body)) {
+      return reject(new BadRequestError('The body can\'t be empty'));
+    }
 
-  // TODO: implement validation
-  if (this.data.body === undefined || _.isEmpty(this.data.body)) {
-    deferred.reject(new BadRequestError('The body can\'t be empty'));
-    return deferred.promise;
-  }
-
-  deferred.resolve();
-  return deferred.promise;
+    resolve();
+  });
 };
 
 module.exports = RequestObject;
