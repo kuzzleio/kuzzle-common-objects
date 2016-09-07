@@ -165,7 +165,7 @@ describe('Test: responseObject', function () {
       should(formatError({}, {body: 'foobar', status: 404}).stack).be.undefined();
       should(formatError({}, {body: 'foobar', status: 500}).stack).be.exactly('foobar');
       should(formatError({}, {foo: 'bar', status: 404}).stack).be.undefined();
-      should(formatError({}, {foo: 'bar', status: 500}).stack).be.an.Object().and.containEql('foo');
+      should(formatError({}, {foo: 'bar', status: 500}).stack).be.an.Object().and.containEql({'foo': 'bar'});
       should(formatError({}, {foo: 'bar', status: 500})._source).be.undefined();
     });
 

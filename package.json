@@ -1,28 +1,39 @@
 {
   "name": "kuzzle-common-objects",
+  "description": "Common objects shared to various Kuzzle components and plugins",
+  "main": "./index.js",
   "author": "The Kuzzle Team <support@kuzzle.io>",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "dependencies": {
-    "bluebird": "^3.4.1",
-    "lodash": "^4.13.1",
+    "bluebird": "^3.4.6",
+    "lodash": "^4.15.0",
     "node-uuid": "^1.4.7"
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "async": "^2.0.0-rc.5",
+    "async": "^2.0.1",
     "codecov": "^1.0.1",
     "grunt": "^1.0.1",
     "grunt-contrib-jshint": "^1.0.0",
-    "gruntify-eslint": "^2.0.0",
-    "istanbul": "^0.4.3",
+    "gruntify-eslint": "^3.1.0",
+    "istanbul": "^0.4.5",
     "istanbul-middleware": "^0.2.2",
-    "mocha": "^2.5.2",
-    "rewire": "^2.5.1",
-    "should": "^8.4.0"
+    "mocha": "^3.0.2",
+    "rewire": "^2.5.2",
+    "should": "^11.1.0"
   },
   "scripts": {
     "test": "npm run unit-testing --coverage && grunt",
     "unit-testing": "istanbul test _mocha",
     "codecov": "cat ./coverage/lcov.info | ./node_modules/.bin/codecov"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kuzzleio/kuzzle-common-objects.git"
+  },
+  "engines": {
+    "node": ">= 4.4.5",
+    "npm": ">= 2.14.4"
+  },
+  "license": "Apache-2.0"
 }
