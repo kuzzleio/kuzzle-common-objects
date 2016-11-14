@@ -5,7 +5,6 @@ var
   should = require('should'),
   async = require('async'),
   rewire = require('rewire'),
-  uuid = require('node-uuid'),
   RequestObject = require.main.require('models/requestObject'),
   ResponseObject = rewire('../models/responseObject'),
   BadRequestError = require.main.require('errors/badRequestError'),
@@ -72,7 +71,7 @@ describe('Test: responseObject', function () {
     should(response.timestamp).be.null();
   });
 
-  async.each(errorItems, function (item, callback) {
+  async.each(errorItems, function (item) {
     it('should initialize a ' + item.name + ' response if such an error is provided', function () {
       var
         error = new item.type('foobar'),

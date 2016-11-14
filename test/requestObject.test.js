@@ -3,8 +3,6 @@
  */
 var
   should = require('should'),
-  rewire = require('rewire'),
-  uuid = require('node-uuid'),
   RequestObject = require.main.require('models/requestObject'),
   BadRequestError = require.main.require('errors/badRequestError');
 
