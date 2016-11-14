@@ -27,6 +27,7 @@ Common objects shared to various Kuzzle components and plugins.
 - [`Errors.partialError`](#errorspartialerror)
 - [`Errors.pluginImplementationError`](#errorspluginimplementationerror)
 - [`Errors.serviceUnavailableError`](#errorsserviceunavailableerror)
+- [`Errors.sizeLimitError`](#errorssizelimiterror)
 - [`Errors.unauthorizedError`](#errorsunauthorizederror)
 
 
@@ -224,6 +225,16 @@ Used when a resource cannot respond because it is temporarily unavailable.
 
 ```js
 var err = new require('kuzzle-common-objects').Errors.serviceUnavailableError('error message');
+```
+
+## `Errors.sizeLimitError`
+
+**Status Code:** `413`
+
+Used to notify about requests exceeding maximum limits.
+
+```js
+var err = new require('kuzzle-common-objects').Errors.sizeLimitError('error message');
 ```
 
 ## `Errors.unauthorizedError`
