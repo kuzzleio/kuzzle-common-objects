@@ -9,5 +9,6 @@ module.exports = {
   partialError: require('./partialError'),
   pluginImplementationError: require('./pluginImplementationError'),
   serviceUnavailableError: require('./serviceUnavailableError'),
+  sizeLimitError: require('./sizeLimitError'),
   unauthorizedError: require('./unauthorizedError')
 };
