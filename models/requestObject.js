@@ -71,6 +71,10 @@ function construct (object, additionalData, protocol) {
     this.data.body = additionalData.body || additionalData;
   }
 
+  if (object.refresh) {
+    this.data.refresh = object.refresh;
+  }
+
   if (object.headers !== undefined) {
     this.headers = object.headers;
   }

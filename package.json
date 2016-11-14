@@ -3,7 +3,7 @@
   "description": "Common objects shared to various Kuzzle components and plugins",
   "main": "./index.js",
   "author": "The Kuzzle Team <support@kuzzle.io>",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "dependencies": {
     "bluebird": "^3.4.6",
     "lodash": "^4.15.0",
@@ -34,6 +34,5 @@
   "engines": {
     "node": ">= 4.4.5",
     "npm": ">= 2.14.4"
-  },
-  "license": "Apache-2.0"
+  }
 }
