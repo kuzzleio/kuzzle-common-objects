@@ -3,8 +3,6 @@
  */
 var
   should = require('should'),
-  rewire = require('rewire'),
-  uuid = require('node-uuid'),
   RequestObject = require.main.require('models/requestObject'),
   BadRequestError = require.main.require('errors/badRequestError');
 
@@ -20,6 +18,7 @@ describe('Test: requestObject', function () {
       collection: 'fakeCollection',
       protocol: protocol,
       requestId: 'fakerequestId',
+      refresh: 'fakeValue',
       body: { _id: 'fakeid', foo: 'bar' },
       state: 'fakeState',
       scope: 'fakeScope',
@@ -45,6 +44,7 @@ describe('Test: requestObject', function () {
     should(requestObject.data).not.be.undefined();
     should(requestObject.data._id).not.be.undefined().and.be.exactly(request.body._id);
     should(requestObject.data.body).not.be.undefined().and.match(request.body);
+    should(requestObject.data.refresh).not.be.undefined().and.match(request.refresh);
     should(requestObject.protocol).be.exactly(protocol);
     should(requestObject.controller).be.exactly(request.controller);
     should(requestObject.collection).be.exactly(request.collection);

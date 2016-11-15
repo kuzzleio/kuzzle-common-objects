@@ -3,7 +3,7 @@
   "description": "Common objects shared to various Kuzzle components and plugins",
   "main": "./index.js",
   "author": "The Kuzzle Team <support@kuzzle.io>",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "dependencies": {
     "bluebird": "^3.4.6",
     "lodash": "^4.15.0",
@@ -13,9 +13,7 @@
   "devDependencies": {
     "async": "^2.0.1",
     "codecov": "^1.0.1",
-    "grunt": "^1.0.1",
-    "grunt-contrib-jshint": "^1.0.0",
-    "gruntify-eslint": "^3.1.0",
+    "eslint": "3.7.1",
     "istanbul": "^0.4.5",
     "istanbul-middleware": "^0.2.2",
     "mocha": "^3.0.2",
@@ -23,8 +21,9 @@
     "should": "^11.1.0"
   },
   "scripts": {
-    "test": "npm run unit-testing --coverage && grunt",
+    "test": "npm run --silent lint && npm run unit-testing --coverage",
     "unit-testing": "istanbul test _mocha",
+    "lint": "eslint --max-warnings=0 index.js ./errors ./models ./test",
     "codecov": "cat ./coverage/lcov.info | ./node_modules/.bin/codecov"
   },
   "repository": {
@@ -34,6 +33,5 @@
   "engines": {
     "node": ">= 4.4.5",
     "npm": ">= 2.14.4"
-  },
-  "license": "Apache-2.0"
+  }
 }
