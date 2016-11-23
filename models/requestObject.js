@@ -1,6 +1,6 @@
 var
   BadRequestError = require('../errors/badRequestError'),
-  uuid = require('node-uuid'),
+  uuid = require('uuid'),
   Promise = require('bluebird'),
   _ = require('lodash');
 
