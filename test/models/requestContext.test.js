@@ -22,19 +22,19 @@ describe('#RequestContext', () => {
     let context = new RequestContext({
       connectionId: 'connectionId',
       protocol: 'protocol',
-      token: 'token',
+      token: {token: 'token'},
       user: {user: 'user'}
     });
 
     should(context.connectionId).eql('connectionId');
     should(context.protocol).eql('protocol');
-    should(context.token).eql('token');
+    should(context.token).match({token: 'token'});
     should(context.user).match({user: 'user'});
   });
 
   it('should throw if an invalid argument type is provided', () => {
     // string arguments
-    ['connectionId', 'protocol', 'token'].forEach(k => {
+    ['connectionId', 'protocol'].forEach(k => {
       should(function () { new RequestContext({[k]: {}}); }).throw(`Attribute ${k} must be of type "string"`);
       should(function () { new RequestContext({[k]: []}); }).throw(`Attribute ${k} must be of type "string"`);
       should(function () { new RequestContext({[k]: 132}); }).throw(`Attribute ${k} must be of type "string"`);
@@ -42,9 +42,11 @@ describe('#RequestContext', () => {
     });
 
     // object arguments
-    should(function () { new RequestContext({user: 'foobar'}); }).throw('Attribute user must be of type "object"');
-    should(function () { new RequestContext({user: []}); }).throw('Attribute user must be of type "object"');
-    should(function () { new RequestContext({user: 132}); }).throw('Attribute user must be of type "object"');
-    should(function () { new RequestContext({user: true}); }).throw('Attribute user must be of type "object"');
+    ['token', 'user'].forEach(k => {
+      should(function () { new RequestContext({[k]: 'foobar'}); }).throw(`Attribute ${k} must be of type "object"`);
+      should(function () { new RequestContext({[k]: []}); }).throw(`Attribute ${k} must be of type "object"`);
+      should(function () { new RequestContext({[k]: 132}); }).throw(`Attribute ${k} must be of type "object"`);
+      should(function () { new RequestContext({[k]: true}); }).throw(`Attribute ${k} must be of type "object"`);
+    });
   });
 });

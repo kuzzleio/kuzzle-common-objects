@@ -55,7 +55,8 @@ This constructor is used to transform an [API request](http://kuzzle.io/api-refe
 | `protocol` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 | `result` | *(varies)* | Invokes [setResult](#setresultresult-status--200) at initialization |
 | `status` | `integer` | HTTP error code |
-| `token` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
+| `token` | `object` | Passed to [RequestContext](#modelsrequestcontext) constructor |
+| `user` | `object` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 
 ### Attributes
 
@@ -174,7 +175,8 @@ This constructor is used to create a connection context used by `Request`
 |------|------|----------------------------------|
 | `connectionId` | `string` | Client's connection unique ID |
 | `protocol` | `string` | Network protocol name |
-| `token` | `string` | Client's authentication token |
+| `token` | `object` | Kuzzle internal authorization token object |
+| `user` | `object` | Kuzzle internal user info object |
 
 ### Attributes
 
@@ -182,7 +184,8 @@ This constructor is used to create a connection context used by `Request`
 |------|------|----------------------------------|
 | `connectionId` | `string` | Client's connection unique ID |
 | `protocol` | `string` | Network protocol name |
-| `token` | `string` | Client's authentication token |
+| `token` | `object` | Kuzzle internal authorization token object |
+| `user` | `object` | Kuzzle internal user info object |
 
 ## `models.RequestInput`
 

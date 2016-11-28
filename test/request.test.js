@@ -41,7 +41,7 @@ describe('#Request', () => {
         error,
         connectionId: 'connectionId',
         protocol: 'protocol',
-        token: 'token',
+        token: {token: 'token'},
         user: { user: 'user' }
       },
       request = new Request({}, options);
@@ -51,7 +51,7 @@ describe('#Request', () => {
     should(request.error).be.exactly(error);
     should(request.context.protocol).eql('protocol');
     should(request.context.connectionId).eql('connectionId');
-    should(request.context.token).eql('token');
+    should(request.context.token).match({token: 'token'});
     should(request.context.user).match({user: 'user'});
   });
 
