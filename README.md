@@ -8,14 +8,14 @@ Common objects shared to various Kuzzle components and plugins.
 **Table of contents:**
 
   - [`Request`](#request)
-    - [`new Request(data)`](#new-requestdata)
+    - [`new Request(data, [options])`](#new-requestdata-options)
     - [Attributes](#attributes)
     - [Methods](#methods)
       - [`setError(error)`](#seterrorerror)
       - [`setResult(result, [status = 200])`](#setresultresult-status--200)
     - [Example](#example)
   - [`models.RequestContext`](#modelsrequestcontext)
-    - [`new RequestContext()`](#new-requestcontext)
+    - [`new RequestContext([options])`](#new-requestcontextoptions)
     - [Attributes](#attributes-1)
   - [`models.RequestInput`](#modelsrequestinput)
     - [`new RequestInput(data)`](#new-requestinputdata)
