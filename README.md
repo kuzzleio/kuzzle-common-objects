@@ -37,27 +37,25 @@ Common objects shared to various Kuzzle components and plugins.
 
 This constructor is used to transform an [API request](http://kuzzle.io/api-reference/?websocket#common-attributes) into a standardized Kuzzle request.
 
-### `new Request(data)`
+### `new Request(data, [options])`
 
 **Arguments**
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
-|`data`|`object`| Standardized API request (see Websocket requests for instance) |
+|`data`|`object`| Passed to [RequestInput](#modelsrequestinput) constructor |
+| `options` | `object` | Optional initialization parameters |
 
-`data` may contain some or all of the following attributes:
+`options` may contain the following attributes:
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
-|`_id`|`string`| Document unique identifier |
-|`action`|`string`| Kuzzle action to perform |
-|`body`|`object`| Contains request specific data (document content, search queries, ...) |
-|`collection` |`string` | Data collection |
-|`controller` |`string`| Kuzzle controller handling the action to perform |
-|`index` |`string`| Data index |
-|`metadata`|`object`| Client's request specific metadata |
-
-Other attributes may be defined and will automatically be passed on to Kuzzle controllers or plugins.
+| `connectionId` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
+| `error` | `KuzzleError` or `Error` | Invokes [setError](#seterrorerror) at initialization |
+| `protocol` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
+| `result` | *(varies)* | Invokes [setResult](#setresultresult-status--200) at initialization |
+| `status` | `integer` | HTTP error code |
+| `token` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 
 ### Attributes
 
@@ -162,7 +160,21 @@ Request {
 
 This constructor is used to create a connection context used by `Request` 
 
-### `new RequestContext()`
+### `new RequestContext([options])`
+
+**Arguments**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `options` | `object` | Optional initialization parameters |
+
+`options` may contain the following attributes:
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `connectionId` | `string` | Client's connection unique ID |
+| `protocol` | `string` | Network protocol name |
+| `token` | `string` | Client's authentication token |
 
 ### Attributes
 
@@ -196,7 +208,7 @@ Contains the request's input data
 |`index` |`string`| Data index |
 |`metadata`|`object`| Client's request specific metadata |
 
-Other attributes may be defined and will automatically be passed on to Kuzzle controllers or plugins.
+Other attributes may be defined and will automatically be added to the `args` object.
 
 ### Attributes
 

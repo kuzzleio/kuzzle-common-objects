@@ -31,6 +31,37 @@ describe('#Request', () => {
     should(rq.error).be.null();
   });
 
+  it('should initialize the request object with the provided options', () => {
+    let
+      result = {foo: 'bar'},
+      error = new InternalError('foobar'),
+      options = {
+        status: 666,
+        result,
+        error,
+        connectionId: 'connectionId',
+        protocol: 'protocol',
+        token: 'token',
+        user: { user: 'user' }
+      },
+      request = new Request({}, options);
+
+    should(request.status).eql(666);
+    should(request.result).be.exactly(result);
+    should(request.error).be.exactly(error);
+    should(request.context.protocol).eql('protocol');
+    should(request.context.connectionId).eql('connectionId');
+    should(request.context.token).eql('token');
+    should(request.context.user).match({user: 'user'});
+  });
+
+  it('should throw if an invalid optional status is provided', () => {
+    should(function () { new Request({}, {status: []}); }).throw('Attribute status must be an integer');
+    should(function () { new Request({}, {status: {}}); }).throw('Attribute status must be an integer');
+    should(function () { new Request({}, {status: 'foobar'}); }).throw('Attribute status must be an integer');
+    should(function () { new Request({}, {status: 123.45}); }).throw('Attribute status must be an integer');
+  });
+
   it('should set an error properly', () => {
     let foo = new KuzzleError('bar', 666);
 
@@ -77,10 +108,10 @@ describe('#Request', () => {
   });
 
   it('should throw if trying to set a non-integer status', () => {
-    should(function () { rq.setResult('foobar', {}); }).throw(/cannot set non-integer value/);
-    should(function () { rq.setResult('foobar', []); }).throw(/cannot set non-integer value/);
-    should(function () { rq.setResult('foobar', true); }).throw(/cannot set non-integer value/);
-    should(function () { rq.setResult('foobar', 123.45); }).throw(/cannot set non-integer value/);
+    should(function () { rq.setResult('foobar', {}); }).throw('Attribute status must be an integer');
+    should(function () { rq.setResult('foobar', []); }).throw('Attribute status must be an integer');
+    should(function () { rq.setResult('foobar', true); }).throw('Attribute status must be an integer');
+    should(function () { rq.setResult('foobar', 123.45); }).throw('Attribute status must be an integer');
   });
 
   it('should build a well-formed response', () => {
