@@ -4,7 +4,7 @@ const
   should = require('should'),
   RequestInput = require.main.require('lib/models/requestInput');
 
-describe('#RequestContext', () => {
+describe('#RequestInput', () => {
   it('should defaults to null all properties', () => {
     let input = new RequestInput({});
 
@@ -55,10 +55,21 @@ describe('#RequestContext', () => {
     should(function () { new RequestInput(true); }).throw('Input request data must be a non-null object');
   });
 
-  it('should throw if invalid metadata is provided', () => {
-    should(function () { new RequestInput({metadata: []}); }).throw('metadata must be null, undefined, or be a non-empty object');
-    should(function () { new RequestInput({metadata: 123}); }).throw('metadata must be null, undefined, or be a non-empty object');
-    should(function () { new RequestInput({metadata: false}); }).throw('metadata must be null, undefined, or be a non-empty object');
-    should(function () { new RequestInput({metadata: 'foobar'}); }).throw('metadata must be null, undefined, or be a non-empty object');
+  it('should throw if an invalid data parameter is provided', () => {
+    // testing object-only parameters
+    ['metadata', 'body'].forEach(k => {
+      should(function () { new RequestInput({[k]: []}); }).throw(`Attribute ${k} must be of type "object"`);
+      should(function () { new RequestInput({[k]: 123}); }).throw(`Attribute ${k} must be of type "object"`);
+      should(function () { new RequestInput({[k]: false}); }).throw(`Attribute ${k} must be of type "object"`);
+      should(function () { new RequestInput({[k]: 'foobar'}); }).throw(`Attribute ${k} must be of type "object"`);
+    });
+    
+    // testing string-only parameters
+    ['controller', 'action', 'index', 'collection', '_id'].forEach(k => {
+      should(function () { new RequestInput({[k]: []}); }).throw(`Attribute ${k} must be of type "string"`);
+      should(function () { new RequestInput({[k]: 123}); }).throw(`Attribute ${k} must be of type "string"`);
+      should(function () { new RequestInput({[k]: false}); }).throw(`Attribute ${k} must be of type "string"`);
+      should(function () { new RequestInput({[k]: {}}); }).throw(`Attribute ${k} must be of type "string"`);
+    });
   });
 });
