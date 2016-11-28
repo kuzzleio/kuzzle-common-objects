@@ -152,6 +152,7 @@ Request {
      body: { document: 'content' },
      controller: 'write',
      action: 'create',
+     token: null,
      resource: { index: 'foo', collection: 'bar', _id: 'some document ID' },
      args: { foo: 'bar' } },
   context: RequestContext { connectionId: null, protocol: null, token: null, user: null } }
@@ -210,6 +211,7 @@ Contains the request's input data
 |`controller` |`string`| Kuzzle controller handling the action to perform |
 |`index` |`string`| Data index |
 |`metadata`|`object`| Client's request specific metadata |
+|`token`|`string`| JWT Authentication token |
 
 Other attributes may be defined and will automatically be added to the `args` object.
 
@@ -225,6 +227,7 @@ Other attributes may be defined and will automatically be added to the `args` ob
 | `resource._id` | `string` | `null` | Document unique identifier |
 | `resource.collection` | `string` | `null` | Data collection |
 | `resource.index` | `string` | `null` | Data index |
+| `token` | `string` | `null` | JWT Authentication token |
 
 
 ## `errors.KuzzleError`
