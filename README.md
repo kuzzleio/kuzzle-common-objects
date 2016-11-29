@@ -53,6 +53,7 @@ This constructor is used to transform an [API request](http://kuzzle.io/api-refe
 | `connectionId` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 | `error` | `KuzzleError` or `Error` | Invokes [setError](#seterrorerror) at initialization |
 | `protocol` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
+| `requestId` | `string` | Initializes the `id` property |
 | `result` | *(varies)* | Invokes [setResult](#setresultresult-status--200) at initialization |
 | `status` | `integer` | HTTP error code |
 | `token` | `object` | Passed to [RequestContext](#modelsrequestcontext) constructor |
