@@ -15,8 +15,8 @@ describe('#Request', () => {
     rq = new Request({});
   });
 
-  it('should have a non-writable id property', () => {
-    should(rq).have.propertyWithDescriptor('id', {enumerable: true, writable: false, configurable: false});
+  it('should have a writable id property', () => {
+    should(rq).have.propertyWithDescriptor('id', {enumerable: true, writable: true, configurable: false});
   });
 
   it('should have a non-writable timestamp property', () => {
@@ -53,6 +53,12 @@ describe('#Request', () => {
     should(request.context.connectionId).eql('connectionId');
     should(request.context.token).match({token: 'token'});
     should(request.context.user).match({user: 'user'});
+  });
+
+  it('should throw if a non-object options argument is provided', () => {
+    should(function () { new Request({}, []); }).throw('Request options must be an object');
+    should(function () { new Request({}, 'foobar'); }).throw('Request options must be an object');
+    should(function () { new Request({}, 123.45); }).throw('Request options must be an object');
   });
 
   it('should throw if an invalid optional status is provided', () => {
