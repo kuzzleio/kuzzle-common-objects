@@ -16,7 +16,7 @@ describe('#RequestInput', () => {
     should(input.resource.collection).be.null();
     should(input.resource._id).be.null();
     should(input.args).be.an.Object().and.be.empty();
-    should(input.token).be.null();
+    should(input.jwt).be.null();
   });
 
   it('should dispatch data correctly across properties', () => {
@@ -31,7 +31,7 @@ describe('#RequestInput', () => {
         _id: 'id',
         foo: 'bar',
         bar: 'foo',
-        token: 'a jwt token'
+        jwt: 'a jwt token'
       },
       input = new RequestInput(data);
 
@@ -39,7 +39,7 @@ describe('#RequestInput', () => {
     should(input.body).be.exactly(data.body);
     should(input.controller).eql('controller');
     should(input.action).eql('action');
-    should(input.token).eql('a jwt token');
+    should(input.jwt).eql('a jwt token');
     should(input.resource.index).eql('index');
     should(input.resource.collection).eql('collection');
     should(input.resource._id).eql('id');
@@ -68,7 +68,7 @@ describe('#RequestInput', () => {
     });
     
     // testing string-only parameters
-    ['controller', 'action', 'index', 'collection', '_id', 'token'].forEach(k => {
+    ['controller', 'action', 'index', 'collection', '_id', 'jwt'].forEach(k => {
       should(function () { new RequestInput({[k]: []}); }).throw(`Attribute ${k} must be of type "string"`);
       should(function () { new RequestInput({[k]: 123}); }).throw(`Attribute ${k} must be of type "string"`);
       should(function () { new RequestInput({[k]: false}); }).throw(`Attribute ${k} must be of type "string"`);
