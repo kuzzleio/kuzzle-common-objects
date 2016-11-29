@@ -90,6 +90,17 @@ Please refer to our [API Reference](http://kuzzle.io/api-reference/?websocket) f
 
 ### Methods
 
+#### `serialize()`
+
+Serializes the `Request` object into a pair of POJOs that can be sent across the network, and then used to rebuild another equivalent `Request` object.
+
+**Example**
+
+```js
+let foo = request.serialize();
+let bar = new Request(foo.data, foo.options);
+```
+
 #### `setError(error)`
 
 Adds an error to the request, and sets the request's status to the error one.

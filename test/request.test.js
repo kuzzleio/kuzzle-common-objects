@@ -152,4 +152,30 @@ describe('#Request', () => {
     should(response.metadata).match(data.metadata);
     should(response.result).be.exactly(result);
   });
+
+  it('should serialize the request correctly', () => {
+    let
+      result = {foo: 'bar'},
+      error = new InternalError('foobar'),
+      data = {
+        index: 'idx',
+        collection: 'collection',
+        controller: 'controller',
+        action: 'action',
+        _id: 'id',
+        metadata: {
+          some: 'meta'
+        },
+        foo: 'bar'
+      },
+      request = new Request(data),
+      serialized;
+
+    request.setResult(result);
+    request.setError(error);
+
+    serialized = request.serialize();
+
+    should((new Request(serialized.data, serialized.options)).response).match(request.response);
+  });
 });
