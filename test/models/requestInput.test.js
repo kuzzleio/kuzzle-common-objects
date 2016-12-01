@@ -75,4 +75,28 @@ describe('#RequestInput', () => {
       should(function () { new RequestInput({[k]: {}}); }).throw(`Attribute ${k} must be of type "string"`);
     });
   });
+
+  it('should not overwrite the controller value if it has already been set', () => {
+    let input = new RequestInput({});
+
+    input.controller = 'foo';
+
+    should(input.controller).eql('foo');
+
+    input.controller = 'bar';
+
+    should(input.controller).eql('foo');
+  });
+
+  it('should not overwrite the action value if it has already been set', () => {
+    let input = new RequestInput({});
+
+    input.action = 'foo';
+
+    should(input.action).eql('foo');
+
+    input.action = 'bar';
+
+    should(input.action).eql('foo');
+  });
 });
