@@ -73,7 +73,7 @@ This constructor is used to transform an [API request](http://kuzzle.io/api-refe
 |------|------|---------|----------------------------------|
 | `context` | `RequestContext` | [RequestContext](#modelsrequestcontext) object | Request connection context |
 | `error` | `KuzzleError` | `null` | Request error, if any |
-| `id` | string | Request unique identifier |
+| `id` | string | Auto-generated UUID | Request unique identifier |
 | `input` | `RequestInput` | [RequestInput](#modelsrequestinput) object | Request's parameters |
 | `result` | *(varies)* | `null` | Request result, if any |
 | `status` | `integer` | `102` | HTTP status code |
