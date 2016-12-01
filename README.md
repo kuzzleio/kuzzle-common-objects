@@ -229,18 +229,26 @@ Other attributes may be defined and will automatically be added to the `args` ob
 
 ### Attributes
 
+**Read-only**
+
+The following attributes can be set after the object has been built, but once set, they cannot be changed:
+
 | Name | Type | Default | Description                      |
 |------|------|---------|----------------------------------|
 | `action` | `string` | `null` | Controller's action to execute |
+| `controller` | `string` | `null` | Kuzzle's controller to invoke |
+
+**Writable**
+
+| Name | Type | Default | Description                      |
+|------|------|---------|----------------------------------|
 | `args` | `object` | *(empty)* | Contains specific request arguments |
 | `body` | `object` | `null` | Request's body (for instance, the content of a document) |
-| `controller` | `string` | `null` | Kuzzle's controller to invoke |
 | `metadata` | `object` | `null` | Request [metadata](http://kuzzle.io/api-reference/?websocket#sending-metadata) |
 | `resource._id` | `string` | `null` | Document unique identifier |
 | `resource.collection` | `string` | `null` | Data collection |
 | `resource.index` | `string` | `null` | Data index |
 | `jwt` | `string` | `null` | JWT Authentication token |
-
 
 ## `errors.KuzzleError`
 
