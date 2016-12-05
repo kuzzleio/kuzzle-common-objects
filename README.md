@@ -5,81 +5,134 @@
 
 Common objects shared to various Kuzzle components and plugins.
 
-# Table of content
+**Table of contents:**
 
-- [`Models.RequestObject`](#modelsrequestobject)
-    - [`RequestObject(data)`](#requestobjectdata)
-      - [Arguments](#arguments)
-      - [RequestObject attributes](#requestobject-attributes)
-      - [Example](#example)
-- [`Models.ResponseObject`](#modelsresponseobject)
-    - [`ResponseObject(requestObject, responseData)`](#responseobjectrequestobject-responsedata)
-      - [Arguments](#arguments-1)
-      - [ResponseObject attributes](#responseobject-attributes)
-    - [`toJson()`](#tojson)
-    - [Example](#example-1)
-- [`Errors.badRequestError`](#errorsbadrequesterror)
-- [`Errors.forbiddenError`](#errorsforbiddenerror)
-- [`Errors.gatewayTimeoutError`](#errorsgatewaytimeouterror)
-- [`Errors.internalError`](#errorsinternalerror)
-- [`Errors.notFoundError`](#errorsnotfounderror)
-- [`Errors.parseError`](#errorsparseerror)
-- [`Errors.partialError`](#errorspartialerror)
-- [`Errors.pluginImplementationError`](#errorspluginimplementationerror)
-- [`Errors.serviceUnavailableError`](#errorsserviceunavailableerror)
-- [`Errors.sizeLimitError`](#errorssizelimiterror)
-- [`Errors.unauthorizedError`](#errorsunauthorizederror)
-
-
-## `Models.RequestObject`
+  - [`Request`](#request)
+    - [`new Request(data, [options])`](#new-requestdata-options)
+    - [Attributes](#attributes)
+    - [Methods](#methods)
+      - [`setError(error)`](#seterrorerror)
+      - [`setResult(result, [status = 200])`](#setresultresult-status--200)
+    - [Example](#example)
+  - [`models.RequestContext`](#modelsrequestcontext)
+    - [`new RequestContext([options])`](#new-requestcontextoptions)
+    - [Attributes](#attributes-1)
+  - [`models.RequestInput`](#modelsrequestinput)
+    - [`new RequestInput(data)`](#new-requestinputdata)
+    - [Attributes](#attributes-2)
+  - [`errors.KuzzleError`](#errorskuzzleerror)
+  - [`errors.BadRequestError`](#errorsbadrequesterror)
+  - [`errors.ForbiddenError`](#errorsforbiddenerror)
+  - [`errors.GatewayTimeoutError`](#errorsgatewaytimeouterror)
+  - [`errors.InternalError`](#errorsinternalerror)
+  - [`errors.NotFoundError`](#errorsnotfounderror)
+  - [`errors.ParseError`](#errorsparseerror)
+  - [`errors.PartialError`](#errorspartialerror)
+  - [`errors.PluginImplementationError`](#errorspluginimplementationerror)
+  - [`errors.ServiceUnavailableError`](#errorsserviceunavailableerror)
+  - [`errors.SizeLimitError`](#errorssizelimiterror)
+  - [`errors.UnauthorizedError`](#errorsunauthorizederror)
+  
+## `Request`
 
 This constructor is used to transform an [API request](http://kuzzle.io/api-reference/?websocket#common-attributes) into a standardized Kuzzle request.
 
-#### `RequestObject(data)`
+### `new Request(data, [options])`
 
-##### Arguments
-
-| Name | Type | Description                      |
-|------|------|----------------------------------|
-|`data`|`object`| Data containing the necessary attributes to perform an API request |
-
-Where `data` may contain some or all of the following attributes:
+**Arguments**
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
-|`action`|`string`| Kuzzle action to perform |
-|`collection` |`string` | Data collection |
-|`controller` |`string`| Kuzzle controller handling the action to perform |
-|`_id`|`string`| Document unique identifier |
-|`body`|`object`| Contains request specific data (document content, search queries, ...) |
-|`index` |`string`| Data index |
-|`metadata`|`object`| Contains request specific metadata |
-|`timestamp`|`integer`| Request timestamp |
+|`data`|`object`| Passed to [RequestInput](#modelsrequestinput) constructor |
+| `options` | `object` | Optional initialization parameters |
 
-
-##### RequestObject attributes
+`options` may contain the following attributes:
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
-|`RequestObject.action`|`string`| Kuzzle action to perform |
-|`RequestObject.collection` |`string` | Data collection |
-|`RequestObject.controller` |`string`| Kuzzle controller handling the action to perform |
-|`RequestObject.data._id`|`string`| Document unique identifier |
-|`RequestObject.data.body`|`object`| Contains request specific data (document content, search queries, ...) |
-|`RequestObject.index` |`string`| Data index |
-|`RequestObject.metadata`|`object`| Contains request specific metadata |
-|`RequestObject.timestamp`|`integer`| Request timestamp |
+| `connectionId` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
+| `error` | `KuzzleError` or `Error` | Invokes [setError](#seterrorerror) at initialization |
+| `protocol` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
+| `requestId` | `string` | Initializes the `id` property |
+| `result` | *(varies)* | Invokes [setResult](#setresultresult-status--200) at initialization |
+| `status` | `integer` | HTTP error code |
+| `token` | `object` | Passed to [RequestContext](#modelsrequestcontext) constructor |
+| `user` | `object` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 
+### Attributes
+
+**Read-only**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `timestamp` | integer | Request creation timestamp |
+
+**Writable**
+
+| Name | Type | default | Description                      |
+|------|------|---------|----------------------------------|
+| `context` | `RequestContext` | [RequestContext](#modelsrequestcontext) object | Request connection context |
+| `error` | `KuzzleError` | `null` | Request error, if any |
+| `id` | `string` | Auto-generated UUID | Request unique identifier |
+| `input` | `RequestInput` | [RequestInput](#modelsrequestinput) object | Request's parameters |
+| `result` | *(varies)* | `null` | Request result, if any |
+| `status` | `integer` | `102` | HTTP status code |
+
+Any undefined attribute from the list above will be set to null.
 
 Please refer to our [API Reference](http://kuzzle.io/api-reference/?websocket) for a complete list of controllers-actions and their purposes.
 
-##### Example
+**Getters**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `response` | `object` | Response view of the request, standardized as the expected [Kuzzle API response](http://kuzzle.io/api-reference/?websocket#kuzzle-response) |
+
+### Methods
+
+#### `serialize()`
+
+Serializes the `Request` object into a pair of POJOs that can be sent across the network, and then used to rebuild another equivalent `Request` object.
+
+**Example**
 
 ```js
-var RequestObject = require('kuzzle-common-objects').Models.requestObject;
+let foo = request.serialize();
+let bar = new Request(foo.data, foo.options);
+```
 
-var requestObject = new RequestObject({
-  controler: 'write',
+#### `setError(error)`
+
+Adds an error to the request, and sets the request's status to the error one.
+
+**Arguments**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `error` | `KuzzleError` or `Error` | Error object to set |
+
+If a `KuzzleError` is provided, the request's status attribute is set to the error one.
+
+Otherwise, the provided error is encapsulated into a [InternalError](#errorsinternalerror) object, and the request's status is set to 500.
+
+#### `setResult(result, [status = 200])`
+
+Adds a result to the request, and sets the request's status with the provided `status` argument.
+ 
+**Arguments**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `result` | *(varies)* | Request's result |
+| `status` | `integer` | HTTP status code |
+
+### Example
+
+```js
+const Request = require('kuzzle-common-objects').Request;
+
+let request = new Request({
+  controller: 'write',
   action: 'create',
   index: 'foo',
   collection: 'bar',
@@ -89,112 +142,193 @@ var requestObject = new RequestObject({
   },
   metadata: {
     some: 'volatile data'
-  }
+  },
+  foo: 'bar'
 });
+
+console.dir(request, {depth: null});
 ```
 
-## `Models.ResponseObject`
+Result:
 
-This constructor creates a standardized Kuzzle Response object from a `RequestObject` and response data.
+```
+Request {
+  id: 'd53fab73-85ef-4494-a09e-2a47eb4147e1',
+  timestamp: 1480324424691,
+  status: 102,
+  error: null,
+  result: null,
+  input: 
+   RequestInput {
+     metadata: { some: 'volatile data' },
+     body: { document: 'content' },
+     controller: 'write',
+     action: 'create',
+     jwt: null,
+     resource: { index: 'foo', collection: 'bar', _id: 'some document ID' },
+     args: { foo: 'bar' } },
+  context: RequestContext { connectionId: null, protocol: null, token: null, user: null } }
+```
 
-#### `ResponseObject(requestObject, responseData)`
+## `models.RequestContext`
 
-##### Arguments
+This constructor is used to create a connection context used by `Request` 
+
+### `new RequestContext([options])`
+
+**Arguments**
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
-|`requestObject`|`RequestObject object`| The request object that generated the response data |
-|`responseData`|`object`| Plain-old JSON object containing the request's results |
+| `options` | `object` | Optional initialization parameters |
 
-##### ResponseObject attributes
+`options` may contain the following attributes:
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
+| `connectionId` | `string` | Client's connection unique ID |
+| `protocol` | `string` | Network protocol name |
+| `token` | `object` | Kuzzle internal authorization token object |
+| `user` | `object` | Kuzzle internal user info object |
+
+### Attributes
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `connectionId` | `string` | Client's connection unique ID |
+| `protocol` | `string` | Network protocol name |
+| `token` | `object` | Kuzzle internal authorization token object |
+| `user` | `object` | Kuzzle internal user info object |
+
+## `models.RequestInput`
+
+Contains the request's input data 
+
+### `new RequestInput(data)`
+
+**Arguments**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+|`data`|`object`| Standardized API request (see Websocket requests for instance) |
+
+`data` may contain some or all of the following attributes:
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+|`_id`|`string`| Document unique identifier |
 |`action`|`string`| Kuzzle action to perform |
+|`body`|`object`| Contains request specific data (document content, search queries, ...) |
 |`collection` |`string` | Data collection |
 |`controller` |`string`| Kuzzle controller handling the action to perform |
-|`data._id`|`string`| Document unique identifier |
-|`data.body`|`object`| Contains response data (document content, search results, ...) |
-|`error`|`Error object`| In case of error, contains the error object |
 |`index` |`string`| Data index |
-|`metadata`|`object`| Contains request specific metadata |
-|`status`|`integer`| Request status, using [HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) |
-|`timestamp`|`integer`| Request timestamp |
+|`metadata`|`object`| Client's request specific metadata |
+|`jwt`|`string`| JWT Authentication token |
 
+Other attributes may be defined and will automatically be added to the `args` object.
 
-#### `toJson()`
+### Attributes
 
-Transforms the `ResponseObject` object into a plain-old JSON object following [Kuzzle standard response format](http://kuzzle.io/api-reference/?websocket#kuzzle-response)
+**Read-only**
 
-#### Example
+The following attributes can be set after the object has been built, but once set, they cannot be changed:
 
-```js
-var ResponseObject = require('kuzzle-common-objects').Models.responseObject;
+| Name | Type | Default | Description                      |
+|------|------|---------|----------------------------------|
+| `action` | `string` | `null` | Controller's action to execute |
+| `controller` | `string` | `null` | Kuzzle's controller to invoke |
 
-var responseObject = new ResponseObject(requestObject, {response: 'data'});
-```
+**Writable**
 
-## `Errors.badRequestError`
+| Name | Type | Default | Description                      |
+|------|------|---------|----------------------------------|
+| `args` | `object` | *(empty)* | Contains specific request arguments |
+| `body` | `object` | `null` | Request's body (for instance, the content of a document) |
+| `metadata` | `object` | `null` | Request [metadata](http://kuzzle.io/api-reference/?websocket#sending-metadata) |
+| `resource._id` | `string` | `null` | Document unique identifier |
+| `resource.collection` | `string` | `null` | Data collection |
+| `resource.index` | `string` | `null` | Data index |
+| `jwt` | `string` | `null` | JWT Authentication token |
+
+## `errors.KuzzleError`
+
+Inherits from `Error`. Abstract class inherited by Kuzzle error objects.
+
+This class should only be used to create new Kuzzle error objects.
+
+## `errors.BadRequestError`
 
 **Status Code:** `400`
 
 Used to notify about badly formed requests.
 
 ```js
-var err = new require('kuzzle-common-objects').Errors.badRequestError('error message');
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.BadRequestError('error message');
 ```
 
-## `Errors.forbiddenError`
+## `errors.ForbiddenError`
 
 **Status Code:** `403`
 
 Used when a user tries to use resources beyond his access rights.
 
 ```js
-var err = new require('kuzzle-common-objects').Errors.forbiddenError('error message');
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.ForbiddenError('error message');
 ```
 
-## `Errors.gatewayTimeoutError`
+## `errors.GatewayTimeoutError`
 
 **Status Code:** `504`
 
 Used when a plugin takes too long to perform a task.
 
 ```js
-var err = new require('kuzzle-common-objects').Errors.gatewayTimeoutError('error message');
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.GatewayTimeoutError('error message');
 ```
 
-## `Errors.internalError`
+## `errors.InternalError`
 
 **Status Code:** `500`
 
-Standard generic error. Used for uncatched exceptions.
+Standard generic error. Used mainly for uncatched exceptions.
 
 ```js
-var err = new require('kuzzle-common-objects').Errors.internalError('error message');
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.InternalError('error message');
 ```
 
-## `Errors.notFoundError`
+## `errors.NotFoundError`
 
 **Status Code:** `404`
 
 Used when asked resources cannot be found.
 
 ```js
-var err = new require('kuzzle-common-objects').Errors.notFoundError('error message');
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.NotFoundError('error message');
 ```
 
-## `Errors.parseError`
+## `errors.ParseError`
 
 **Status Code:** `400`
 
 Used when a provided resource cannot be interpreted.
 
 ```js
-var err = new require('kuzzle-common-objects').Errors.parseError('error message');
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.ParseError('error message');
 ```
 
-## `Errors.partialError`
+## `errors.PartialError`
 
 **Status Code:** `206`
 
@@ -203,46 +337,56 @@ Used when a request only partially succeeded.
 The constructor takes an additional `array` argument containing a list of failed parts.
 
 ```js
-var err = new require('kuzzle-common-objects').Errors.partialError('error message', [{this: 'failed'}, {andThis: 'failed too'}]);
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.PartialError('error message', [{this: 'failed'}, {andThis: 'failed too'}]);
 ```
 
 
-## `Errors.pluginImplementationError`
+## `errors.PluginImplementationError`
 
 **Status Code:** `500`
 
 Used when a plugin fails.
 
 ```js
-var err = new require('kuzzle-common-objects').Errors.pluginImplementationError('error message');
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.PluginImplementationError('error message');
 ```
 
-## `Errors.serviceUnavailableError`
+## `errors.ServiceUnavailableError`
 
 **Status Code:** `503`
 
-Used when a resource cannot respond because it is temporarily unavailable.
+Used when a service cannot respond because it is temporarily unavailable.
 
 ```js
-var err = new require('kuzzle-common-objects').Errors.serviceUnavailableError('error message');
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.ServiceUnavailableError('error message');
 ```
 
-## `Errors.sizeLimitError`
+## `errors.SizeLimitError`
 
 **Status Code:** `413`
 
 Used to notify about requests exceeding maximum limits.
 
 ```js
-var err = new require('kuzzle-common-objects').Errors.sizeLimitError('error message');
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.SizeLimitError('error message');
 ```
 
-## `Errors.unauthorizedError`
+## `errors.UnauthorizedError`
 
 **Status Code:** `401`
 
 Used when a user fails a login attempt.
 
 ```js
-var err = new require('kuzzle-common-objects').Errors.unauthorizedError('error message');
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.UnauthorizedError('error message');
 ```
