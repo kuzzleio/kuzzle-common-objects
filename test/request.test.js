@@ -67,6 +67,8 @@ describe('#Request', () => {
 
     should(rq.error).be.exactly(foo);
     should(rq.status).eql(666);
+
+    should(rq.error.toJSON()).be.exactly(foo);
   });
 
   it('should wrap a plain Error object into an InternalError one', () => {
@@ -112,9 +114,21 @@ describe('#Request', () => {
     should(function () { rq.setResult('foobar', 123.45); }).throw('Attribute status must be an integer');
   });
 
+  it('should throw if trying to set some non-array headers', () => {
+    should(() => { rq.setResult('foobar', undefined, 42) }).throw('response headers must a be an array');
+    should(() => { rq.setResult('foobar', undefined, {}) }).throw('response headers must a be an array');
+    should(() => { rq.setResult('foobar', undefined, 'bar') }).throw('response headers must a be an array');
+    should(() => { rq.setResult('foobar', undefined, true) }).throw('response headers must a be an array');
+
+  });
+
   it('should build a well-formed response', () => {
     let
       result = {foo: 'bar'},
+      responseHeaders = [
+        'X-Foo: bar',
+        'X-Bar: baz'
+      ],
       error = new InternalError('foobar'),
       data = {
         index: 'idx',
@@ -129,7 +143,7 @@ describe('#Request', () => {
       request = new Request(data),
       response;
 
-    request.setResult(result);
+    request.setResult(result, 201, responseHeaders);
     request.setError(error);
 
     response = request.response;
@@ -142,6 +156,7 @@ describe('#Request', () => {
     should(response.collection).eql(data.collection);
     should(response.index).eql(data.index);
     should(response.metadata).match(data.metadata);
+    should(response.headers).be.exactly(responseHeaders);
     should(response.result).be.exactly(result);
   });
 
