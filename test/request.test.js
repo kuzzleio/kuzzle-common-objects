@@ -115,10 +115,10 @@ describe('#Request', () => {
   });
 
   it('should throw if trying to set some non-array headers', () => {
-    should(() => { rq.setResult('foobar', undefined, 42) }).throw('response headers must a be an array');
-    should(() => { rq.setResult('foobar', undefined, {}) }).throw('response headers must a be an array');
-    should(() => { rq.setResult('foobar', undefined, 'bar') }).throw('response headers must a be an array');
-    should(() => { rq.setResult('foobar', undefined, true) }).throw('response headers must a be an array');
+    should(() => { rq.setResult('foobar', undefined, 42); }).throw('response headers must a be an array');
+    should(() => { rq.setResult('foobar', undefined, {}); }).throw('response headers must a be an array');
+    should(() => { rq.setResult('foobar', undefined, 'bar'); }).throw('response headers must a be an array');
+    should(() => { rq.setResult('foobar', undefined, true); }).throw('response headers must a be an array');
 
   });
 
