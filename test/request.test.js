@@ -15,14 +15,6 @@ describe('#Request', () => {
     rq = new Request({});
   });
 
-  it('should have a writable id property', () => {
-    should(rq).have.propertyWithDescriptor('id', {enumerable: true, writable: true, configurable: false});
-  });
-
-  it('should have a non-writable timestamp property', () => {
-    should(rq).have.propertyWithDescriptor('timestamp', {enumerable: true, writable: false, configurable: false});
-  });
-
   it('should defaults other properties correctly', () => {
     should(rq.status).eql(102);
     should(rq.context).be.instanceOf(RequestContext);

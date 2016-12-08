@@ -5,19 +5,6 @@ const
   RequestContext = require.main.require('lib/models/requestContext');
 
 describe('#RequestContext', () => {
-  let rqc;
-
-  beforeEach(() => {
-    rqc = new RequestContext();
-  });
-
-  it('should build a well-formed object', () => {
-    should(rqc).have.enumerable('connectionId');
-    should(rqc).have.enumerable('protocol');
-    should(rqc).have.enumerable('token');
-    should(rqc).have.enumerable('user');
-  });
-
   it('should initialize itself with provided options', () => {
     let context = new RequestContext({
       connectionId: 'connectionId',
