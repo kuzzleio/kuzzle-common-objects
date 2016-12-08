@@ -114,21 +114,20 @@ describe('#Request', () => {
     should(function () { rq.setResult('foobar', 123.45); }).throw('Attribute status must be an integer');
   });
 
-  it('should throw if trying to set some non-array headers', () => {
-    should(() => { rq.setResult('foobar', undefined, 42); }).throw('response headers must be an array');
-    should(() => { rq.setResult('foobar', undefined, {}); }).throw('response headers must be an array');
-    should(() => { rq.setResult('foobar', undefined, 'bar'); }).throw('response headers must be an array');
-    should(() => { rq.setResult('foobar', undefined, true); }).throw('response headers must be an array');
-
+  it('should throw if trying to set some non-object headers', () => {
+    should(() => { rq.setResult('foobar', undefined, 42); }).throw('Attribute headers must be of type "object"');
+    should(() => { rq.setResult('foobar', undefined, { a: true }); }).throw('Attribute headers must be of type "object" and have all its properties of type string.\nExpected "headers.a" to be of type "string", but go "boolean".');
+    should(() => { rq.setResult('foobar', undefined, 'bar'); }).throw('Attribute headers must be of type "object"');
+    should(() => { rq.setResult('foobar', undefined, true); }).throw('Attribute headers must be of type "object"');
   });
 
   it('should build a well-formed response', () => {
     let
       result = {foo: 'bar'},
-      responseHeaders = [
-        'X-Foo: bar',
-        'X-Bar: baz'
-      ],
+      responseHeaders = {
+        'X-Foo': 'bar',
+        'X-Bar': 'baz'
+      },
       error = new InternalError('foobar'),
       data = {
         index: 'idx',
@@ -156,7 +155,7 @@ describe('#Request', () => {
     should(response.collection).eql(data.collection);
     should(response.index).eql(data.index);
     should(response.metadata).match(data.metadata);
-    should(response.headers).be.exactly(responseHeaders);
+    should(response.headers).match(responseHeaders);
     should(response.result).be.exactly(result);
   });
 
@@ -165,6 +164,7 @@ describe('#Request', () => {
       result = {foo: 'bar'},
       error = new InternalError('foobar'),
       data = {
+        timestamp: 'timestamp',
         index: 'idx',
         collection: 'collection',
         controller: 'controller',
@@ -183,6 +183,8 @@ describe('#Request', () => {
 
     serialized = request.serialize();
 
-    should((new Request(serialized.data, serialized.options)).response).match(request.response);
+    let newRequest = new Request(serialized.data, serialized.options);
+    should(newRequest).match(request.response);
+    should(newRequest.timestamp).be.eql('timestamp');
   });
 });
