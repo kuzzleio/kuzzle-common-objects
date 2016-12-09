@@ -15,14 +15,6 @@ describe('#Request', () => {
     rq = new Request({});
   });
 
-  it('should have a writable id property', () => {
-    should(rq).have.propertyWithDescriptor('id', {enumerable: true, writable: true, configurable: false});
-  });
-
-  it('should have a non-writable timestamp property', () => {
-    should(rq).have.propertyWithDescriptor('timestamp', {enumerable: true, writable: false, configurable: false});
-  });
-
   it('should defaults other properties correctly', () => {
     should(rq.status).eql(102);
     should(rq.context).be.instanceOf(RequestContext);
@@ -75,6 +67,8 @@ describe('#Request', () => {
 
     should(rq.error).be.exactly(foo);
     should(rq.status).eql(666);
+
+    should(rq.error.toJSON()).be.exactly(foo);
   });
 
   it('should wrap a plain Error object into an InternalError one', () => {
@@ -120,9 +114,20 @@ describe('#Request', () => {
     should(function () { rq.setResult('foobar', 123.45); }).throw('Attribute status must be an integer');
   });
 
+  it('should throw if trying to set some non-object headers', () => {
+    should(() => { rq.setResult('foobar', undefined, 42); }).throw('Attribute headers must be of type "object"');
+    should(() => { rq.setResult('foobar', undefined, { a: true }); }).throw('Attribute headers must be of type "object" and have all its properties of type string.\nExpected "headers.a" to be of type "string", but go "boolean".');
+    should(() => { rq.setResult('foobar', undefined, 'bar'); }).throw('Attribute headers must be of type "object"');
+    should(() => { rq.setResult('foobar', undefined, true); }).throw('Attribute headers must be of type "object"');
+  });
+
   it('should build a well-formed response', () => {
     let
       result = {foo: 'bar'},
+      responseHeaders = {
+        'X-Foo': 'bar',
+        'X-Bar': 'baz'
+      },
       error = new InternalError('foobar'),
       data = {
         index: 'idx',
@@ -137,7 +142,7 @@ describe('#Request', () => {
       request = new Request(data),
       response;
 
-    request.setResult(result);
+    request.setResult(result, 201, responseHeaders);
     request.setError(error);
 
     response = request.response;
@@ -150,6 +155,7 @@ describe('#Request', () => {
     should(response.collection).eql(data.collection);
     should(response.index).eql(data.index);
     should(response.metadata).match(data.metadata);
+    should(response.headers).match(responseHeaders);
     should(response.result).be.exactly(result);
   });
 
@@ -158,6 +164,7 @@ describe('#Request', () => {
       result = {foo: 'bar'},
       error = new InternalError('foobar'),
       data = {
+        timestamp: 'timestamp',
         index: 'idx',
         collection: 'collection',
         controller: 'controller',
@@ -176,6 +183,8 @@ describe('#Request', () => {
 
     serialized = request.serialize();
 
-    should((new Request(serialized.data, serialized.options)).response).match(request.response);
+    let newRequest = new Request(serialized.data, serialized.options);
+    should(newRequest).match(request.response);
+    should(newRequest.timestamp).be.eql('timestamp');
   });
 });

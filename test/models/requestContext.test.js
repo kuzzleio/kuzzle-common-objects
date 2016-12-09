@@ -5,27 +5,19 @@ const
   RequestContext = require.main.require('lib/models/requestContext');
 
 describe('#RequestContext', () => {
-  let rqc;
+  const args = {
+    connectionId: 'connectionId',
+    protocol: 'protocol',
+    token: {token: 'token'},
+    user: {user: 'user'}
+  };
+  let context;
 
   beforeEach(() => {
-    rqc = new RequestContext();
-  });
-
-  it('should build a well-formed object', () => {
-    should(rqc).have.enumerable('connectionId');
-    should(rqc).have.enumerable('protocol');
-    should(rqc).have.enumerable('token');
-    should(rqc).have.enumerable('user');
+    context = new RequestContext(args);
   });
 
   it('should initialize itself with provided options', () => {
-    let context = new RequestContext({
-      connectionId: 'connectionId',
-      protocol: 'protocol',
-      token: {token: 'token'},
-      user: {user: 'user'}
-    });
-
     should(context.connectionId).eql('connectionId');
     should(context.protocol).eql('protocol');
     should(context.token).match({token: 'token'});
@@ -48,5 +40,10 @@ describe('#RequestContext', () => {
       should(function () { new RequestContext({[k]: 132}); }).throw(`Attribute ${k} must be of type "object"`);
       should(function () { new RequestContext({[k]: true}); }).throw(`Attribute ${k} must be of type "object"`);
     });
+  });
+
+  it('should serialize properly', () => {
+    should(context.toJSON())
+      .match(args);
   });
 });
