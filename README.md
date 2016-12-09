@@ -86,7 +86,7 @@ Please refer to our [API Reference](http://kuzzle.io/api-reference/?websocket) f
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
-| `response` | `object` | Response view of the request, standardized as the expected [Kuzzle API response](http://kuzzle.io/api-reference/?websocket#kuzzle-response) |
+| `response` | `RequestResponse` | Response view of the request, standardized as the expected [Kuzzle API response](http://kuzzle.io/api-reference/?websocket#kuzzle-response) |
 
 ### Methods
 
@@ -170,10 +170,92 @@ Request {
   context: RequestContext { connectionId: null, protocol: null, token: null, user: null } }
 ```
 
+## `RequestResponse`
+
+This object is not exposed and can only be retrieved using the `Request.response` getter.
+
+Network protocol specific headers can be added to the response. If the protocol can handle them, these headers will be used to configure the response sent to the client.    
+As Kuzzle supports the HTTP protocol natively, this objects handles HTTP headers special cases. Other network protocols headers are stored in raw format, and protocol plugins need to handle their specific headers manually.
+
+Header names are case insensitive.
+
+**Example**
+
+```
+if (request.context.protocol === 'http') {
+  request.response.setHeader('Content-Type', 'text/plain');
+}
+```
+
+### Attributes
+
+**Writable**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `action` | `string` | Parent request invoked controller action |
+| `collection` | `string` | Parent request data collection |
+| `controller` | `string` | Parent request invoked controller |
+| `error` | `KuzzleError` | Response error, or `null` |
+| `metadata` | `object` | Parent request metadata |
+| `index` | `string` | Parent request data index |
+| `requestId` | `string` | Parent request unique identifier |
+| `result` | `*` | Response result |
+| `status` | `integer` | Response HTTP status code |
+
+### Methods
+
+#### `getHeader(name)`
+
+Returns the value registered for the response header `name`
+
+**Arguments**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `name` | `string` | Header name |
+
+#### `getHeaders()`
+
+Returns an object describing all currently registered headers on that response.
+
+**Example**
+
+```
+if (request.context.protocol === 'http') {
+  request.response.setHeader('Content-Type', 'text/plain');
+  
+  /*
+    Prints:
+    { "Content-Type": "text/plain" }
+   */
+  console.log(request.response.getHeaders());
+}
+```
+
+#### `removeHeader(name)`
+
+Removes header `name` from the response headers.
+
+#### `setHeader(name, value)`
+
+Adds a header `name` with value `value` to the response headers.
+
+**Arguments**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `name` | `string` | Header name |
+| `value` | `string` | Header value |
+
+If `name` already exists, `value` will be concatenated to the existing value, separated by a comma.  
+Except for the HTTP `set-cookie` header, as `RequestResponse` maintains an array of cookies to conform with HTTP headers specifications. 
+
+
 ## `models.RequestContext`
 
-This constructor is used to create a connection context used by `Request` 
-
+This constructor is used to create a connection context used by `Request`.
+ 
 ### `new RequestContext([options])`
 
 **Arguments**
