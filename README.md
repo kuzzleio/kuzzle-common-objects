@@ -183,7 +183,7 @@ Request {
 This object is not exposed and can only be retrieved using the `Request.response` getter.
 
 Network protocol specific headers can be added to the response. If the protocol can handle them, these headers will be used to configure the response sent to the client.    
-As Kuzzle supports the HTTP protocol natively, this objects handles HTTP headers special cases. Other network protocols headers are stored in raw format, and protocol plugins need to handle their specific headers manually.
+As Kuzzle supports the HTTP protocol natively, this object handles HTTP headers special cases. Other network protocols headers are stored in raw format, and protocol plugins need to handle their own specific headers manually.
 
 Header names are case insensitive.
 
@@ -208,7 +208,7 @@ if (request.context.protocol === 'http') {
 | `metadata` | `object` | Parent request metadata |
 | `index` | `string` | Parent request data index |
 | `requestId` | `string` | Parent request unique identifier |
-| `result` | `*` | Response result |
+| `result` | `*` | Response result, or `null` |
 | `status` | `integer` | Response HTTP status code |
 
 ### Methods
