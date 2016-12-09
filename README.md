@@ -256,8 +256,9 @@ Adds a header `name` with value `value` to the response headers.
 | `name` | `string` | Header name |
 | `value` | `string` | Header value |
 
-If `name` already exists, `value` will be concatenated to the existing value, separated by a comma.  
-Except for the HTTP `set-cookie` header, as `RequestResponse` maintains an array of cookies to conform with HTTP headers specifications. 
+For standard headers, if `name` already exists, then the provided `value` will be concatenated to the existing value, separated by a comma.  
+
+As Kuzzle implements HTTP natively, this behavior changes for some HTTP specific headers, to comply with the norm. For instance `set-cookie` values are amended in an array, and other headers like `user-agent` or `host` can store only 1 value. 
 
 
 ## `models.RequestContext`
