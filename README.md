@@ -11,15 +11,23 @@ Common objects shared to various Kuzzle components and plugins.
     - [`new Request(data, [options])`](#new-requestdata-options)
     - [Attributes](#attributes)
     - [Methods](#methods)
+      - [`serialize()`](#serialize)
       - [`setError(error)`](#seterrorerror)
       - [`setResult(result, [status = 200])`](#setresultresult-status--200)
     - [Example](#example)
+  - [`RequestResponse`](#requestresponse)
+    - [Attributes](#attributes-1)
+    - [Methods](#methods-1)
+      - [`getHeader(name)`](#getheadername)
+      - [`getHeaders()`](#getheaders)
+      - [`removeHeader(name)`](#removeheadername)
+      - [`setHeader(name, value)`](#setheadername-value)
   - [`models.RequestContext`](#modelsrequestcontext)
     - [`new RequestContext([options])`](#new-requestcontextoptions)
-    - [Attributes](#attributes-1)
+    - [Attributes](#attributes-2)
   - [`models.RequestInput`](#modelsrequestinput)
     - [`new RequestInput(data)`](#new-requestinputdata)
-    - [Attributes](#attributes-2)
+    - [Attributes](#attributes-3)
   - [`errors.KuzzleError`](#errorskuzzleerror)
   - [`errors.BadRequestError`](#errorsbadrequesterror)
   - [`errors.ForbiddenError`](#errorsforbiddenerror)
@@ -86,7 +94,7 @@ Please refer to our [API Reference](http://kuzzle.io/api-reference/?websocket) f
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
-| `response` | `object` | Response view of the request, standardized as the expected [Kuzzle API response](http://kuzzle.io/api-reference/?websocket#kuzzle-response) |
+| `response` | `RequestResponse` | Response view of the request, standardized as the expected [Kuzzle API response](http://kuzzle.io/api-reference/?websocket#kuzzle-response) |
 
 ### Methods
 
@@ -170,10 +178,93 @@ Request {
   context: RequestContext { connectionId: null, protocol: null, token: null, user: null } }
 ```
 
+## `RequestResponse`
+
+This object is not exposed and can only be retrieved using the `Request.response` getter.
+
+Network protocol specific headers can be added to the response. If the protocol can handle them, these headers will be used to configure the response sent to the client.    
+As Kuzzle supports the HTTP protocol natively, this object handles HTTP headers special cases. Other network protocols headers are stored in raw format, and protocol plugins need to handle their own specific headers manually.
+
+Header names are case insensitive.
+
+**Example**
+
+```
+if (request.context.protocol === 'http') {
+  request.response.setHeader('Content-Type', 'text/plain');
+}
+```
+
+### Attributes
+
+**Writable**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `action` | `string` | Parent request invoked controller action |
+| `collection` | `string` | Parent request data collection |
+| `controller` | `string` | Parent request invoked controller |
+| `error` | `KuzzleError` | Response error, or `null` |
+| `metadata` | `object` | Parent request metadata |
+| `index` | `string` | Parent request data index |
+| `requestId` | `string` | Parent request unique identifier |
+| `result` | `*` | Response result, or `null` |
+| `status` | `integer` | Response HTTP status code |
+
+### Methods
+
+#### `getHeader(name)`
+
+Returns the value registered for the response header `name`
+
+**Arguments**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `name` | `string` | Header name |
+
+#### `getHeaders()`
+
+Returns an object describing all currently registered headers on that response.
+
+**Example**
+
+```
+if (request.context.protocol === 'http') {
+  request.response.setHeader('Content-Type', 'text/plain');
+  
+  /*
+    Prints:
+    { "Content-Type": "text/plain" }
+   */
+  console.log(request.response.getHeaders());
+}
+```
+
+#### `removeHeader(name)`
+
+Removes header `name` from the response headers.
+
+#### `setHeader(name, value)`
+
+Adds a header `name` with value `value` to the response headers.
+
+**Arguments**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `name` | `string` | Header name |
+| `value` | `string` | Header value |
+
+For standard headers, if `name` already exists, then the provided `value` will be concatenated to the existing value, separated by a comma.  
+
+As Kuzzle implements HTTP natively, this behavior changes for some HTTP specific headers, to comply with the norm. For instance `set-cookie` values are amended in an array, and other headers like `user-agent` or `host` can store only 1 value. 
+
+
 ## `models.RequestContext`
 
-This constructor is used to create a connection context used by `Request` 
-
+This constructor is used to create a connection context used by `Request`.
+ 
 ### `new RequestContext([options])`
 
 **Arguments**
