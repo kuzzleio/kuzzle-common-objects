@@ -13,7 +13,7 @@ Common objects shared to various Kuzzle components and plugins.
     - [Methods](#methods)
       - [`serialize()`](#serialize)
       - [`setError(error)`](#seterrorerror)
-      - [`setResult(result, [status = 200])`](#setresultresult-status--200)
+      - [`setResult(result, [options = null])`](#setresultresult-options--null)
     - [Example](#example)
   - [`RequestResponse`](#requestresponse)
     - [Attributes](#attributes-1)
@@ -40,7 +40,7 @@ Common objects shared to various Kuzzle components and plugins.
   - [`errors.ServiceUnavailableError`](#errorsserviceunavailableerror)
   - [`errors.SizeLimitError`](#errorssizelimiterror)
   - [`errors.UnauthorizedError`](#errorsunauthorizederror)
-  
+
 ## `Request`
 
 This constructor is used to transform an [API request](http://kuzzle.io/api-reference/?websocket#common-attributes) into a standardized Kuzzle request.
@@ -62,7 +62,7 @@ This constructor is used to transform an [API request](http://kuzzle.io/api-refe
 | `error` | `KuzzleError` or `Error` | Invokes [setError](#seterrorerror) at initialization |
 | `protocol` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 | `requestId` | `string` | Initializes the `id` property |
-| `result` | *(varies)* | Invokes [setResult](#setresultresult-status--200) at initialization |
+| `result` | *(varies)* | Invokes [setResult](#setresultresult-options--null) at initialization |
 | `status` | `integer` | HTTP error code |
 | `token` | `object` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 | `user` | `object` | Passed to [RequestContext](#modelsrequestcontext) constructor |
@@ -123,16 +123,24 @@ If a `KuzzleError` is provided, the request's status attribute is set to the err
 
 Otherwise, the provided error is encapsulated into a [InternalError](#errorsinternalerror) object, and the request's status is set to 500.
 
-#### `setResult(result, [status = 200])`
+#### `setResult(result, [options = null])`
 
-Adds a result to the request, and sets the request's status with the provided `status` argument.
+Sets the request's result.
  
 **Arguments**
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
 | `result` | *(varies)* | Request's result |
-| `status` | `integer` | HTTP status code |
+| `options` | `object` | Optional parameters |
+
+The `options` argument may contain the following properties:
+
+| Name | Type | Description                      | Default |
+|------|------|----------------------------------|---------|
+| `status` | `integer` | HTTP status code | `200` |
+| `headers` | `object` | Protocol specific headers | `null` |
+| `raw` | `boolean` | Asks Kuzzle to send the provided result directly, instead of encapsulating it in a Kuzzle response | `false` |
 
 ### Example
 
@@ -154,28 +162,30 @@ let request = new Request({
   foo: 'bar'
 });
 
-console.dir(request, {depth: null});
+console.dir(request.serialize(), {depth: null});
 ```
 
 Result:
 
 ```
-Request {
-  id: 'd53fab73-85ef-4494-a09e-2a47eb4147e1',
-  timestamp: 1480324424691,
-  status: 102,
-  error: null,
-  result: null,
-  input: 
-   RequestInput {
+{ data: 
+   { timestamp: 1482143102957,
+     requestId: '26d4ec6d-aafb-4ef8-951d-47666e5cf3ba',
+     jwt: null,
      metadata: { some: 'volatile data' },
      body: { document: 'content' },
      controller: 'write',
      action: 'create',
-     jwt: null,
-     resource: { index: 'foo', collection: 'bar', _id: 'some document ID' },
-     args: { foo: 'bar' } },
-  context: RequestContext { connectionId: null, protocol: null, token: null, user: null } }
+     index: 'foo',
+     collection: 'bar',
+     _id: 'some document ID',
+     foo: 'bar' },
+  options: 
+   { connectionId: null,
+     protocol: null,
+     result: null,
+     error: null,
+     status: 102 } }
 ```
 
 ## `RequestResponse`

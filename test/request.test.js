@@ -97,7 +97,7 @@ describe('#Request', () => {
 
   it('should set a custom status code if one is provided', () => {
     let result = {foo: 'bar'};
-    rq.setResult(result, 666);
+    rq.setResult(result, {status: 666});
 
     should(rq.result).be.exactly(result);
     should(rq.status).eql(666);
@@ -108,17 +108,28 @@ describe('#Request', () => {
   });
 
   it('should throw if trying to set a non-integer status', () => {
-    should(function () { rq.setResult('foobar', {}); }).throw('Attribute status must be an integer');
-    should(function () { rq.setResult('foobar', []); }).throw('Attribute status must be an integer');
-    should(function () { rq.setResult('foobar', true); }).throw('Attribute status must be an integer');
-    should(function () { rq.setResult('foobar', 123.45); }).throw('Attribute status must be an integer');
+    should(function () { rq.setResult('foobar', {status: {}}); }).throw('Attribute status must be an integer');
+    should(function () { rq.setResult('foobar', {status: []}); }).throw('Attribute status must be an integer');
+    should(function () { rq.setResult('foobar', {status: true}); }).throw('Attribute status must be an integer');
+    should(function () { rq.setResult('foobar', {status: 123.45}); }).throw('Attribute status must be an integer');
   });
 
   it('should throw if trying to set some non-object headers', () => {
-    should(() => { rq.setResult('foobar', undefined, 42); }).throw('Attribute headers must be of type "object"');
-    should(() => { rq.setResult('foobar', undefined, { a: true }); }).throw('Attribute headers must be of type "object" and have all its properties of type string.\nExpected "headers.a" to be of type "string", but go "boolean".');
-    should(() => { rq.setResult('foobar', undefined, 'bar'); }).throw('Attribute headers must be of type "object"');
-    should(() => { rq.setResult('foobar', undefined, true); }).throw('Attribute headers must be of type "object"');
+    should(() => { rq.setResult('foobar', {headers: 42}); }).throw('Attribute headers must be of type "object"');
+    should(() => { rq.setResult('foobar', {headers: { a: true }}); }).throw('Attribute headers must be of type "object" and have all its properties of type string.\nExpected "headers.a" to be of type "string", but go "boolean".');
+    should(() => { rq.setResult('foobar', {headers:  'bar'}); }).throw('Attribute headers must be of type "object"');
+    should(() => { rq.setResult('foobar', {headers:  true}); }).throw('Attribute headers must be of type "object"');
+  });
+
+  it('should set the raw response indicator if provided', () => {
+    let result = {foo: 'bar'};
+    
+    should(rq.response.raw).be.false();
+
+    rq.setResult(result, {raw: true});
+
+    should(rq.result).be.exactly(result);
+    should(rq.response.raw).be.true();
   });
 
   it('should build a well-formed response', () => {
@@ -142,7 +153,7 @@ describe('#Request', () => {
       request = new Request(data),
       response;
 
-    request.setResult(result, 201, responseHeaders);
+    request.setResult(result, {status: 201, headers: responseHeaders});
     request.setError(error);
 
     response = request.response;
@@ -184,7 +195,7 @@ describe('#Request', () => {
     serialized = request.serialize();
 
     let newRequest = new Request(serialized.data, serialized.options);
-    should(newRequest).match(request.response);
+    should(newRequest.response.toJSON()).match(request.response.toJSON());
     should(newRequest.timestamp).be.eql('timestamp');
   });
 });
