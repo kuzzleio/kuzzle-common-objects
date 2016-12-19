@@ -186,24 +186,38 @@ describe('#RequestResponse', () => {
   });
 
   describe('toJSON', () => {
-    it('should return a valid JSON object', () => {
+    it('should return a valid JSON object in Kuzzle format', () => {
       let response = new RequestResponse(req);
 
       response.setHeader('x-foo', 'bar');
 
-      should(Object.keys(response.toJSON()))
-        .be.eql([
-          'status',
-          'error',
-          'requestId',
-          'controller',
-          'action',
-          'collection',
-          'index',
-          'metadata',
-          'headers',
-          'result'
-        ]);
+      should(response.toJSON()).have.properties(['raw', 'content', 'headers']);
+      should(response.toJSON().content).have.properties([
+        'status',
+        'error',
+        'requestId',
+        'controller',
+        'action',
+        'collection',
+        'index',
+        'metadata',
+        'result'
+      ]);
+      should(response.toJSON().raw).be.false();
+      should(response.toJSON().headers).match({'x-foo': 'bar'});
+    });
+
+    it('should return a valid JSON object in raw format', () => {
+      let response = new RequestResponse(req);
+
+      response.raw = true;
+      response.setHeader('x-foo', 'bar');
+      response.result = 'foobar';
+
+      should(response.toJSON()).have.properties(['raw', 'content', 'headers']);
+      should(response.toJSON().content).be.eql('foobar');
+      should(response.toJSON().raw).be.true();
+      should(response.toJSON().headers).match({'x-foo': 'bar'});
     });
   });
 
