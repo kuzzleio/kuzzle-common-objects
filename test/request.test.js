@@ -121,6 +121,17 @@ describe('#Request', () => {
     should(() => { rq.setResult('foobar', {headers:  true}); }).throw('Attribute headers must be of type "object"');
   });
 
+  it('should set the raw response indicator if provided', () => {
+    let result = {foo: 'bar'};
+    
+    should(rq.response.raw).be.false();
+
+    rq.setResult(result, {raw: true});
+
+    should(rq.result).be.exactly(result);
+    should(rq.response.raw).be.true();
+  });
+
   it('should build a well-formed response', () => {
     let
       result = {foo: 'bar'},
