@@ -191,9 +191,8 @@ describe('#RequestResponse', () => {
 
       response.setHeader('x-foo', 'bar');
 
-      should(response.toJSON()).have.properties(['raw', 'content', 'headers']);
+      should(response.toJSON()).have.properties(['raw', 'status', 'requestId', 'content', 'headers']);
       should(response.toJSON().content).have.properties([
-        'status',
         'error',
         'requestId',
         'controller',
@@ -213,8 +212,10 @@ describe('#RequestResponse', () => {
       response.raw = true;
       response.setHeader('x-foo', 'bar');
       response.result = 'foobar';
+      response.status = 666;
 
       should(response.toJSON()).have.properties(['raw', 'content', 'headers']);
+      should(response.toJSON().status).be.eql(666);
       should(response.toJSON().content).be.eql('foobar');
       should(response.toJSON().raw).be.true();
       should(response.toJSON().headers).match({'x-foo': 'bar'});
