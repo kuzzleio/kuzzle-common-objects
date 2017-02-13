@@ -19,7 +19,7 @@
     "test": "npm run --silent lint && npm run unit-testing --coverage",
     "unit-testing": "istanbul test _mocha",
     "lint": "eslint --max-warnings=0 index.js ./errors ./models ./test",
-    "codecov": "cat ./coverage/lcov.info | ./node_modules/.bin/codecov"
+    "codecov": "codecov"
   },
   "repository": {
     "type": "git",
