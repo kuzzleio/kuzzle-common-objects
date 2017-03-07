@@ -198,4 +198,15 @@ describe('#Request', () => {
     should(newRequest.response.toJSON()).match(request.response.toJSON());
     should(newRequest.timestamp).be.eql('timestamp');
   });
+
+  it('should track the list of triggered events', () => {
+    let request = new Request({});
+
+    should(request.hasTriggered('foobar')).be.false();
+    request.triggers('foobar');
+    should(request.hasTriggered('foobar')).be.true();
+
+    request.triggers('barfoo');
+    should(request.hasTriggered('foobar')).be.true();
+  });
 });
