@@ -123,7 +123,7 @@ describe('#Request', () => {
 
   it('should set the raw response indicator if provided', () => {
     let result = {foo: 'bar'};
-    
+
     should(rq.response.raw).be.false();
 
     rq.setResult(result, {raw: true});
@@ -208,5 +208,79 @@ describe('#Request', () => {
 
     request.triggers('barfoo');
     should(request.hasTriggered('foobar')).be.true();
+  });
+
+  it('should keep track of previously triggered events in the origin request', () => {
+    const
+      origin = new Request({}),
+      request = new Request({});
+
+    request.origin = origin;
+
+    should(request.hasTriggered('foobar')).be.false();
+    should(origin.hasTriggered('foobar')).be.false();
+
+    request.triggers('foobar');
+    should(request.hasTriggered('foobar')).be.true();
+    should(origin.hasTriggered('foobar')).be.true();
+  });
+
+  it('should not overwrite a previously set origin', () => {
+    let
+      request = new Request({}),
+      origin = new Request({});
+
+    should(request.origin).be.null();
+
+    request.origin = origin;
+    should(request.origin).be.eql(origin);
+
+    request.origin = new Request({});
+    should(request.origin).be.eql(origin);
+  });
+
+  it('should set the request origin when invoking the origin setter', () => {
+    let
+      origin = new Request({}),
+      request1 = new Request({}),
+      request2 = new Request({});
+
+    request1.origin = origin;
+    request2.origin = request1;
+
+    should(request1.origin).be.eql(origin);
+    should(request2.origin).be.eql(origin);
+  });
+
+  it('should not overwrite a previously set previous request', () => {
+    let
+      request = new Request({}),
+      previous = new Request({});
+
+    should(request.previous).be.null();
+
+    request.previous = previous;
+    should(request.previous).be.eql(previous);
+
+    request.previous = new Request({});
+    should(request.previous).be.eql(previous);
+  });
+
+  it('should throw if a non-Request is provided as a previous request', () => {
+    let request = new Request({});
+
+    should(() => { request.previous = 'foobar'; }).throw(InternalError);
+    should(() => { request.previous = null; }).throw(InternalError);
+    should(() => { request.previous = true; }).throw(InternalError);
+    should(() => { request.previous = 123; }).throw(InternalError);
+  });
+
+  it('should throw if a non-Request is provided as a request origin', () => {
+    let request = new Request({});
+
+    should(() => { request.origin = 'foobar'; }).throw(InternalError);
+    should(() => { request.origin = null; }).throw(InternalError);
+    should(() => { request.origin = true; }).throw(InternalError);
+    should(() => { request.origin = 123; }).throw(InternalError);
   });
 });
