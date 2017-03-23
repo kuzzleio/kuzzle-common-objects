@@ -76,6 +76,15 @@ This constructor is used to transform an [API request](http://kuzzle.io/api-refe
 |------|------|----------------------------------|
 | `timestamp` | integer | Request creation timestamp |
 
+**Read-only**
+
+The following attributes can be set after the object has been built, but once set, they cannot be changed:
+
+| Name | Type | default | Description                      |
+|------|------|---------|----------------------------------|
+| `origin` | `Request` | `null` | The first request of a requests chain |
+| `previous` | `Request` | `null` | The previous request of a requests chain |
+
 **Writable**
 
 | Name | Type | default | Description                      |
