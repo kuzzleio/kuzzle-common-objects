@@ -146,7 +146,7 @@ describe('#Request', () => {
         controller: 'controller',
         action: 'action',
         _id: 'id',
-        metadata: {
+        volatile: {
           some: 'meta'
         }
       },
@@ -165,7 +165,7 @@ describe('#Request', () => {
     should(response.action).eql(data.action);
     should(response.collection).eql(data.collection);
     should(response.index).eql(data.index);
-    should(response.metadata).match(data.metadata);
+    should(response.volatile).match(data.volatile);
     should(response.headers).match(responseHeaders);
     should(response.result).be.exactly(result);
   });
@@ -181,7 +181,7 @@ describe('#Request', () => {
         controller: 'controller',
         action: 'action',
         _id: 'id',
-        metadata: {
+        volatile: {
           some: 'meta'
         },
         foo: 'bar'
