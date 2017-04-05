@@ -19,9 +19,9 @@ Common objects shared to various Kuzzle components and plugins.
     - [Attributes](#attributes-1)
     - [Methods](#methods-1)
       - [`getHeader(name)`](#getheadername)
-      - [`getHeaders()`](#getheaders)
       - [`removeHeader(name)`](#removeheadername)
       - [`setHeader(name, value)`](#setheadername-value)
+      - [`setHeaders(headers)`](#setheadersheaders)
   - [`models.RequestContext`](#modelsrequestcontext)
     - [`new RequestContext([options])`](#new-requestcontextoptions)
     - [Attributes](#attributes-2)
@@ -79,11 +79,7 @@ This constructor is used to transform an [API request](http://kuzzle.io/api-refe
 
 | Name | Type | default | Description                      |
 |------|------|---------|----------------------------------|
-| `context` | `RequestContext` | [RequestContext](#modelsrequestcontext) object | Request connection context |
-| `error` | `KuzzleError` | `null` | Request error, if any |
 | `id` | `string` | Auto-generated UUID | Request unique identifier |
-| `input` | `RequestInput` | [RequestInput](#modelsrequestinput) object | Request's parameters |
-| `result` | *(varies)* | `null` | Request result, if any |
 | `status` | `integer` | `102` | HTTP status code |
 
 Any undefined attribute from the list above will be set to null.
@@ -94,7 +90,11 @@ Please refer to our [API Reference](http://kuzzle.io/api-reference/?websocket) f
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
+| `context` | `RequestContext` | [RequestContext](#modelsrequestcontext) object | Request connection context |
+| `error` | `KuzzleError` | `null` | Request error, if any |
+| `input` | `RequestInput` | [RequestInput](#modelsrequestinput) object | Request's parameters |
 | `response` | `RequestResponse` | Response view of the request, standardized as the expected [Kuzzle API response](http://kuzzle.io/api-reference/?websocket#kuzzle-response) |
+| `result` | *(varies)* | `null` | Request result, if any |
 
 ### Methods
 
@@ -126,7 +126,7 @@ Otherwise, the provided error is encapsulated into a [InternalError](#errorsinte
 #### `setResult(result, [options = null])`
 
 Sets the request's result.
- 
+
 **Arguments**
 
 | Name | Type | Description                      |
@@ -168,7 +168,7 @@ console.dir(request.serialize(), {depth: null});
 Result:
 
 ```
-{ data: 
+{ data:
    { timestamp: 1482143102957,
      requestId: '26d4ec6d-aafb-4ef8-951d-47666e5cf3ba',
      jwt: null,
@@ -180,7 +180,7 @@ Result:
      collection: 'bar',
      _id: 'some document ID',
      foo: 'bar' },
-  options: 
+  options:
    { connectionId: null,
      protocol: null,
      result: null,
@@ -211,15 +211,21 @@ if (request.context.protocol === 'http') {
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
+| `error` | `KuzzleError` | Response error, or `null` |
+| `result` | `*` | Response result, or `null` |
+| `status` | `integer` | Response HTTP status code |
+
+**Getters**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
 | `action` | `string` | Parent request invoked controller action |
 | `collection` | `string` | Parent request data collection |
 | `controller` | `string` | Parent request invoked controller |
-| `error` | `KuzzleError` | Response error, or `null` |
-| `metadata` | `object` | Parent request metadata |
+| `headers` | `object` | An object describing all currently registered headers on that response |
 | `index` | `string` | Parent request data index |
+| `metadata` | `object` | Parent request metadata |
 | `requestId` | `string` | Parent request unique identifier |
-| `result` | `*` | Response result, or `null` |
-| `status` | `integer` | Response HTTP status code |
 
 ### Methods
 
@@ -233,23 +239,6 @@ Returns the value registered for the response header `name`
 |------|------|----------------------------------|
 | `name` | `string` | Header name |
 
-#### `getHeaders()`
-
-Returns an object describing all currently registered headers on that response.
-
-**Example**
-
-```
-if (request.context.protocol === 'http') {
-  request.response.setHeader('Content-Type', 'text/plain');
-  
-  /*
-    Prints:
-    { "Content-Type": "text/plain" }
-   */
-  console.log(request.response.getHeaders());
-}
-```
 
 #### `removeHeader(name)`
 
@@ -268,13 +257,24 @@ Adds a header `name` with value `value` to the response headers.
 
 For standard headers, if `name` already exists, then the provided `value` will be concatenated to the existing value, separated by a comma.  
 
-As Kuzzle implements HTTP natively, this behavior changes for some HTTP specific headers, to comply with the norm. For instance `set-cookie` values are amended in an array, and other headers like `user-agent` or `host` can store only 1 value. 
+As Kuzzle implements HTTP natively, this behavior changes for some HTTP specific headers, to comply with the norm. For instance `set-cookie` values are amended in an array, and other headers like `user-agent` or `host` can store only 1 value.
 
+#### `setHeaders(headers)`
+
+Adds multiple items to the response headers.
+
+**Arguments**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `headers` | `object` | An object describing the headers to set |
+
+The `setHeader` method will be called for each item of the `headers` argument.
 
 ## `models.RequestContext`
 
 This constructor is used to create a connection context used by `Request`.
- 
+
 ### `new RequestContext([options])`
 
 **Arguments**
@@ -294,6 +294,8 @@ This constructor is used to create a connection context used by `Request`.
 
 ### Attributes
 
+**Writable**
+
 | Name | Type | Description                      |
 |------|------|----------------------------------|
 | `connectionId` | `string` | Client's connection unique ID |
@@ -303,7 +305,7 @@ This constructor is used to create a connection context used by `Request`.
 
 ## `models.RequestInput`
 
-Contains the request's input data 
+Contains the request's input data
 
 ### `new RequestInput(data)`
 
@@ -330,21 +332,14 @@ Other attributes may be defined and will automatically be added to the `args` ob
 
 ### Attributes
 
-**Read-only**
-
-The following attributes can be set after the object has been built, but once set, they cannot be changed:
-
-| Name | Type | Default | Description                      |
-|------|------|---------|----------------------------------|
-| `action` | `string` | `null` | Controller's action to execute |
-| `controller` | `string` | `null` | Kuzzle's controller to invoke |
-
 **Writable**
 
 | Name | Type | Default | Description                      |
 |------|------|---------|----------------------------------|
+| `action` | `string` | `null` | Controller's action to execute |
 | `args` | `object` | *(empty)* | Contains specific request arguments |
 | `body` | `object` | `null` | Request's body (for instance, the content of a document) |
+| `controller` | `string` | `null` | Kuzzle's controller to invoke |
 | `metadata` | `object` | `null` | Request [metadata](http://kuzzle.io/api-reference/?websocket#sending-metadata) |
 | `resource._id` | `string` | `null` | Document unique identifier |
 | `resource.collection` | `string` | `null` | Data collection |
