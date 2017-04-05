@@ -5,6 +5,7 @@ const
   KuzzleError = require.main.require('lib/errors/kuzzleError'),
   InternalError = require.main.require('lib/errors/internalError'),
   Request = require.main.require('lib/request'),
+  RequestResponse = require.main.require('lib/models/requestResponse'),
   RequestContext = require.main.require('lib/models/requestContext'),
   RequestInput = require.main.require('lib/models/requestInput');
 
@@ -130,6 +131,19 @@ describe('#Request', () => {
 
     should(rq.result).be.exactly(result);
     should(rq.response.raw).be.true();
+  });
+
+  it('should return the origin response instead of building a new one', () => {
+    const
+      origin = new Request({}),
+      request = new Request({});
+
+    request.origin = origin;
+
+    const originResponse = origin.response;
+
+    should(originResponse).be.instanceOf(RequestResponse);
+    should(request.response).be.exactly(originResponse);
   });
 
   it('should build a well-formed response', () => {
