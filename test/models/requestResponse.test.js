@@ -29,7 +29,7 @@ describe('#RequestResponse', () => {
       should(response.action).be.exactly(req.input.action);
       should(response.collection).be.exactly(req.input.resource.collection);
       should(response.index).be.exactly(req.input.resource.index);
-      should(response.metadata).be.exactly(req.input.metadata);
+      should(response.volatile).be.exactly(req.input.volatile);
       should(response.headers).be.exactly(req[Symbol.for('request.response.headers')]);
       should(response.result).be.exactly(req.result);
     });
@@ -199,7 +199,7 @@ describe('#RequestResponse', () => {
         'action',
         'collection',
         'index',
-        'metadata',
+        'volatile',
         'result'
       ]);
       should(response.toJSON().raw).be.false();

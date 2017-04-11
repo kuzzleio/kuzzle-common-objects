@@ -30,6 +30,7 @@ Common objects shared to various Kuzzle components and plugins.
     - [Attributes](#attributes-3)
   - [`errors.KuzzleError`](#errorskuzzleerror)
   - [`errors.BadRequestError`](#errorsbadrequesterror)
+  - [`errors.ExternalServiceError`](#errorsexternalserviceerror)
   - [`errors.ForbiddenError`](#errorsforbiddenerror)
   - [`errors.GatewayTimeoutError`](#errorsgatewaytimeouterror)
   - [`errors.InternalError`](#errorsinternalerror)
@@ -74,6 +75,15 @@ This constructor is used to transform an [API request](http://kuzzle.io/api-refe
 | Name | Type | Description                      |
 |------|------|----------------------------------|
 | `timestamp` | integer | Request creation timestamp |
+
+**Read-only**
+
+The following attributes can be set after the object has been built, but once set, they cannot be changed:
+
+| Name | Type | default | Description                      |
+|------|------|---------|----------------------------------|
+| `origin` | `Request` | `null` | The first request of a requests chain |
+| `previous` | `Request` | `null` | The previous request of a requests chain |
 
 **Writable**
 
@@ -126,7 +136,7 @@ Otherwise, the provided error is encapsulated into a [InternalError](#errorsinte
 #### `setResult(result, [options = null])`
 
 Sets the request's result.
- 
+
 **Arguments**
 
 | Name | Type | Description                      |
@@ -168,7 +178,7 @@ console.dir(request.serialize(), {depth: null});
 Result:
 
 ```
-{ data: 
+{ data:
    { timestamp: 1482143102957,
      requestId: '26d4ec6d-aafb-4ef8-951d-47666e5cf3ba',
      jwt: null,
@@ -180,7 +190,7 @@ Result:
      collection: 'bar',
      _id: 'some document ID',
      foo: 'bar' },
-  options: 
+  options:
    { connectionId: null,
      protocol: null,
      result: null,
@@ -242,7 +252,7 @@ Returns an object describing all currently registered headers on that response.
 ```
 if (request.context.protocol === 'http') {
   request.response.setHeader('Content-Type', 'text/plain');
-  
+
   /*
     Prints:
     { "Content-Type": "text/plain" }
@@ -268,13 +278,13 @@ Adds a header `name` with value `value` to the response headers.
 
 For standard headers, if `name` already exists, then the provided `value` will be concatenated to the existing value, separated by a comma.  
 
-As Kuzzle implements HTTP natively, this behavior changes for some HTTP specific headers, to comply with the norm. For instance `set-cookie` values are amended in an array, and other headers like `user-agent` or `host` can store only 1 value. 
+As Kuzzle implements HTTP natively, this behavior changes for some HTTP specific headers, to comply with the norm. For instance `set-cookie` values are amended in an array, and other headers like `user-agent` or `host` can store only 1 value.
 
 
 ## `models.RequestContext`
 
 This constructor is used to create a connection context used by `Request`.
- 
+
 ### `new RequestContext([options])`
 
 **Arguments**
@@ -303,7 +313,7 @@ This constructor is used to create a connection context used by `Request`.
 
 ## `models.RequestInput`
 
-Contains the request's input data 
+Contains the request's input data
 
 ### `new RequestInput(data)`
 
@@ -367,6 +377,18 @@ Used to notify about badly formed requests.
 const errors = require('kuzzle-common-objects').errors;
 
 let err = new errors.BadRequestError('error message');
+```
+
+## `errors.ExternalServiceError`
+
+**Status Code:** `500`
+
+Used when an external service answers to a request with an error other than a bad request or a service unavailable one.
+
+```js
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.ExternalServiceError('error message');
 ```
 
 ## `errors.ForbiddenError`
