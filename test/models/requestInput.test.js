@@ -8,7 +8,7 @@ describe('#RequestInput', () => {
   it('should defaults to null all properties', () => {
     let input = new RequestInput({});
 
-    should(input.metadata).be.null();
+    should(input.volatile).be.null();
     should(input.body).be.null();
     should(input.controller).be.null();
     should(input.action).be.null();
@@ -22,7 +22,7 @@ describe('#RequestInput', () => {
   it('should dispatch data correctly across properties', () => {
     let
       data = {
-        metadata: {foo: 'bar'},
+        volatile: {foo: 'bar'},
         body: {some: 'content'},
         controller: 'controller',
         action: 'action',
@@ -35,7 +35,7 @@ describe('#RequestInput', () => {
       },
       input = new RequestInput(data);
 
-    should(input.metadata).be.exactly(data.metadata);
+    should(input.volatile).be.exactly(data.volatile);
     should(input.body).be.exactly(data.body);
     should(input.controller).eql('controller');
     should(input.action).eql('action');
@@ -60,7 +60,7 @@ describe('#RequestInput', () => {
 
   it('should throw if an invalid data parameter is provided', () => {
     // testing object-only parameters
-    ['metadata', 'body'].forEach(k => {
+    ['volatile', 'body'].forEach(k => {
       should(function () { new RequestInput({[k]: []}); }).throw(`Attribute ${k} must be of type "object"`);
       should(function () { new RequestInput({[k]: 123}); }).throw(`Attribute ${k} must be of type "object"`);
       should(function () { new RequestInput({[k]: false}); }).throw(`Attribute ${k} must be of type "object"`);

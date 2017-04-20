@@ -30,6 +30,7 @@ Common objects shared to various Kuzzle components and plugins.
     - [Attributes](#attributes-3)
   - [`errors.KuzzleError`](#errorskuzzleerror)
   - [`errors.BadRequestError`](#errorsbadrequesterror)
+  - [`errors.ExternalServiceError`](#errorsexternalserviceerror)
   - [`errors.ForbiddenError`](#errorsforbiddenerror)
   - [`errors.GatewayTimeoutError`](#errorsgatewaytimeouterror)
   - [`errors.InternalError`](#errorsinternalerror)
@@ -74,6 +75,15 @@ This constructor is used to transform an [API request](http://kuzzle.io/api-refe
 | Name | Type | Description                      |
 |------|------|----------------------------------|
 | `timestamp` | integer | Request creation timestamp |
+
+**Read-only**
+
+The following attributes can be set after the object has been built, but once set, they cannot be changed:
+
+| Name | Type | default | Description                      |
+|------|------|---------|----------------------------------|
+| `origin` | `Request` | `null` | The first request of a requests chain |
+| `previous` | `Request` | `null` | The previous request of a requests chain |
 
 **Writable**
 
@@ -362,6 +372,18 @@ Used to notify about badly formed requests.
 const errors = require('kuzzle-common-objects').errors;
 
 let err = new errors.BadRequestError('error message');
+```
+
+## `errors.ExternalServiceError`
+
+**Status Code:** `500`
+
+Used when an external service answers to a request with an error other than a bad request or a service unavailable one.
+
+```js
+const errors = require('kuzzle-common-objects').errors;
+
+let err = new errors.ExternalServiceError('error message');
 ```
 
 ## `errors.ForbiddenError`
