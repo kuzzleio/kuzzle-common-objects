@@ -166,7 +166,7 @@ let request = new Request({
   body: {
     document: 'content'
   },
-  metadata: {
+  volatile: {
     some: 'volatile data'
   },
   foo: 'bar'
@@ -182,7 +182,7 @@ Result:
    { timestamp: 1482143102957,
      requestId: '26d4ec6d-aafb-4ef8-951d-47666e5cf3ba',
      jwt: null,
-     metadata: { some: 'volatile data' },
+     volatile: { some: 'volatile data' },
      body: { document: 'content' },
      controller: 'write',
      action: 'create',
@@ -234,7 +234,7 @@ if (request.context.protocol === 'http') {
 | `controller` | `string` | Parent request invoked controller |
 | `headers` | `object` | An object describing all currently registered headers on that response |
 | `index` | `string` | Parent request data index |
-| `metadata` | `object` | Parent request metadata |
+| `volatile` | `object` | Parent request volatile data |
 | `requestId` | `string` | Parent request unique identifier |
 
 ### Methods
@@ -335,7 +335,7 @@ Contains the request's input data
 |`collection` |`string` | Data collection |
 |`controller` |`string`| Kuzzle controller handling the action to perform |
 |`index` |`string`| Data index |
-|`metadata`|`object`| Client's request specific metadata |
+|`volatile` |`object`| Client's request specific volatile data |
 |`jwt`|`string`| JWT Authentication token |
 
 Other attributes may be defined and will automatically be added to the `args` object.
@@ -350,7 +350,7 @@ Other attributes may be defined and will automatically be added to the `args` ob
 | `args` | `object` | *(empty)* | Contains specific request arguments |
 | `body` | `object` | `null` | Request's body (for instance, the content of a document) |
 | `controller` | `string` | `null` | Kuzzle's controller to invoke |
-| `metadata` | `object` | `null` | Request [metadata](http://kuzzle.io/api-reference/?websocket#sending-metadata) |
+| `volatile` | `object` | `null` | Request [volatile data](http://docs.kuzzle.io/api-reference/#sending-metadata) |
 | `resource._id` | `string` | `null` | Document unique identifier |
 | `resource.collection` | `string` | `null` | Data collection |
 | `resource.index` | `string` | `null` | Data index |
