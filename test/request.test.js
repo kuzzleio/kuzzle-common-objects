@@ -10,14 +10,9 @@ const
 
 describe('#Request', () => {
   let rq;
-  let currentEnv = process.env.NODE_ENV;
 
   beforeEach(() => {
     rq = new Request({});
-  });
-
-  afterEach(() => {
-    process.env.NODE_ENV = currentEnv;
   });
 
   it('should defaults other properties correctly', () => {
@@ -29,8 +24,6 @@ describe('#Request', () => {
   });
 
   it('should initialize the request object with the provided options', () => {
-    process.env.NODE_ENV = 'development';
-
     let
       result = {foo: 'bar'},
       error = new InternalError('foobar'),
@@ -68,8 +61,6 @@ describe('#Request', () => {
   });
 
   it('should set an error properly', () => {
-    process.env.NODE_ENV = 'development';
-
     let foo = new KuzzleError('bar', 666);
 
     rq.setError(foo);
@@ -81,7 +72,6 @@ describe('#Request', () => {
   });
 
   it('should wrap a plain Error object into an InternalError one', () => {
-    process.env.NODE_ENV = 'development';
     let foo = new Error('bar');
 
     rq.setError(foo);
@@ -143,7 +133,6 @@ describe('#Request', () => {
   });
 
   it('should build a well-formed response', () => {
-    process.env.NODE_ENV = 'development';
     let
       result = {foo: 'bar'},
       responseHeaders = {
@@ -182,7 +171,6 @@ describe('#Request', () => {
   });
 
   it('should serialize the request correctly', () => {
-    process.env.NODE_ENV = 'development';
     let
       result = {foo: 'bar'},
       error = new InternalError('foobar'),
