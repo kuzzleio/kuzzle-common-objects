@@ -42,12 +42,6 @@ describe('#RequestResponse', () => {
   });
 
   describe('#properties', () => {
-    let currentEnv = process.env.NODE_ENV;
-
-    afterEach(() => {
-      process.env.NODE_ENV = currentEnv;
-    });
-
     it('should set the request status', () => {
       const response = new RequestResponse(req);
 
@@ -60,28 +54,9 @@ describe('#RequestResponse', () => {
         error = new ParseError('test'),
         response = new RequestResponse(req);
 
-      process.env.NODE_ENV = 'development';
-
       response.error = error;
       should(req.error).be.exactly(error);
       should(req.status).be.exactly(error.status);
-
-      process.env.NODE_ENV = currentEnv;
-    });
-
-    it('should set the request error without stack if the environment is different than development', () => {
-      const
-        error = new ParseError('test'),
-        response = new RequestResponse(req);
-
-      process.env.NODE_ENV = 'production';
-
-      response.error = error;
-      should(req.error.stack).be.undefined();
-      should(req.error.message).be.exactly(error.message);
-      should(req.status).be.exactly(error.status);
-
-      process.env.NODE_ENV = currentEnv;
     });
 
     it('should set the request result', () => {
