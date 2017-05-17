@@ -62,6 +62,7 @@ This constructor is used to transform an [API request](http://kuzzle.io/api-refe
 | `connectionId` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 | `error` | `KuzzleError` or `Error` | Invokes [setError](#seterrorerror) at initialization |
 | `protocol` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
+| `headers` | `object` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 | `requestId` | `string` | Initializes the `id` property |
 | `result` | *(varies)* | Invokes [setResult](#setresultresult-options--null) at initialization |
 | `status` | `integer` | HTTP error code |
@@ -299,6 +300,7 @@ This constructor is used to create a connection context used by `Request`.
 |------|------|----------------------------------|
 | `connectionId` | `string` | Client's connection unique ID |
 | `protocol` | `string` | Network protocol name |
+| `headers` | `object` | request headers (ie. HTTP headers for HTTP an Websocket protocols) |
 | `token` | `object` | Kuzzle internal authorization token object |
 | `user` | `object` | Kuzzle internal user info object |
 
@@ -310,6 +312,7 @@ This constructor is used to create a connection context used by `Request`.
 |------|------|----------------------------------|
 | `connectionId` | `string` | Client's connection unique ID |
 | `protocol` | `string` | Network protocol name |
+| `headers` | `object` | request headers (ie. HTTP headers for HTTP an Websocket protocols) |
 | `token` | `object` | Kuzzle internal authorization token object |
 | `user` | `object` | Kuzzle internal user info object |
 
