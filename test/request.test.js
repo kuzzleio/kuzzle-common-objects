@@ -33,6 +33,7 @@ describe('#Request', () => {
         error,
         connectionId: 'connectionId',
         protocol: 'protocol',
+        headers: {foo: 'bar'},
         token: {token: 'token'},
         user: { user: 'user' }
       },
@@ -42,6 +43,7 @@ describe('#Request', () => {
     should(request.result).be.exactly(result);
     should(request.error).be.exactly(error);
     should(request.context.protocol).eql('protocol');
+    should(request.context.headers).match({foo: 'bar'});
     should(request.context.connectionId).eql('connectionId');
     should(request.context.token).match({token: 'token'});
     should(request.context.user).match({user: 'user'});
@@ -186,13 +188,26 @@ describe('#Request', () => {
         },
         foo: 'bar'
       },
-      request = new Request(data),
+      options = {
+        status: 666,
+        connectionId: 'connectionId',
+        protocol: 'protocol',
+        headers: {foo: 'bar'}
+      },
+      request = new Request(data, options),
       serialized;
 
     request.setResult(result);
     request.setError(error);
 
     serialized = request.serialize();
+
+    should(serialized.options.protocol).eql('protocol');
+    should(serialized.options.headers).match({foo: 'bar'});
+    should(serialized.options.connectionId).eql('connectionId');
+    should(serialized.options.error).match(error);
+    should(serialized.options.result).match(result);
+    should(serialized.options.status).be.eql(500);
 
     let newRequest = new Request(serialized.data, serialized.options);
     should(newRequest.response.toJSON()).match(request.response.toJSON());
