@@ -33,7 +33,6 @@ describe('#Request', () => {
         error,
         connectionId: 'connectionId',
         protocol: 'protocol',
-        headers: {foo: 'bar'},
         token: {token: 'token'},
         user: { user: 'user' }
       },
@@ -43,7 +42,6 @@ describe('#Request', () => {
     should(request.result).be.exactly(result);
     should(request.error).be.exactly(error);
     should(request.context.protocol).eql('protocol');
-    should(request.context.headers).match({foo: 'bar'});
     should(request.context.connectionId).eql('connectionId');
     should(request.context.token).match({token: 'token'});
     should(request.context.user).match({user: 'user'});
@@ -177,6 +175,7 @@ describe('#Request', () => {
       result = {foo: 'bar'},
       error = new InternalError('foobar'),
       data = {
+        body: {some: 'body'},
         timestamp: 'timestamp',
         index: 'idx',
         collection: 'collection',
@@ -186,13 +185,13 @@ describe('#Request', () => {
         volatile: {
           some: 'meta'
         },
-        foo: 'bar'
+        foo: 'bar',
+        headers: {foo: 'bar'}
       },
       options = {
         status: 666,
         connectionId: 'connectionId',
         protocol: 'protocol',
-        headers: {foo: 'bar'}
       },
       request = new Request(data, options),
       serialized;
@@ -202,9 +201,19 @@ describe('#Request', () => {
 
     serialized = request.serialize();
 
+    should(serialized.data.body).match({some: 'body'});
+    should(serialized.data.volatile).match({some: 'meta'});
+    should(serialized.data.headers).match({foo: 'bar'});
+    should(serialized.data.controller).be.eql('controller');
+    should(serialized.data.action).be.eql('action');
+    should(serialized.data.index).be.eql('idx');
+    should(serialized.data.collection).be.eql('collection');
+    should(serialized.data._id).be.eql('id');
+    should(serialized.data.timestamp).be.eql('timestamp');
+    should(serialized.data.foo).be.eql('bar');
+
     should(serialized.options.protocol).eql('protocol');
-    should(serialized.options.headers).match({foo: 'bar'});
-    should(serialized.options.connectionId).eql('connectionId');
+    should(serialized.options.connectionId).be.eql('connectionId');
     should(serialized.options.error).match(error);
     should(serialized.options.result).match(result);
     should(serialized.options.status).be.eql(500);

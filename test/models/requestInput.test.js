@@ -17,6 +17,7 @@ describe('#RequestInput', () => {
     should(input.resource._id).be.null();
     should(input.args).be.an.Object().and.be.empty();
     should(input.jwt).be.null();
+    should(input.headers).be.null();
   });
 
   it('should dispatch data correctly across properties', () => {
@@ -31,7 +32,8 @@ describe('#RequestInput', () => {
         _id: 'id',
         foo: 'bar',
         bar: 'foo',
-        jwt: 'a jwt token'
+        jwt: 'a jwt token',
+        headers: {foo: 'bar'}
       },
       input = new RequestInput(data);
 
@@ -47,6 +49,7 @@ describe('#RequestInput', () => {
       foo: 'bar',
       bar: 'foo'
     });
+    should(input.headers).match({foo: 'bar'});
   });
 
   it('should throw if invalid data is provided', () => {
@@ -66,7 +69,7 @@ describe('#RequestInput', () => {
       should(function () { new RequestInput({[k]: false}); }).throw(`Attribute ${k} must be of type "object"`);
       should(function () { new RequestInput({[k]: 'foobar'}); }).throw(`Attribute ${k} must be of type "object"`);
     });
-    
+
     // testing string-only parameters
     ['controller', 'action', 'index', 'collection', '_id', 'jwt'].forEach(k => {
       should(function () { new RequestInput({[k]: []}); }).throw(`Attribute ${k} must be of type "string"`);

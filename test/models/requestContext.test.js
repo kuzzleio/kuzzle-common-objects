@@ -8,7 +8,6 @@ describe('#RequestContext', () => {
   const args = {
     connectionId: 'connectionId',
     protocol: 'protocol',
-    headers: {foo: 'bar'},
     token: {token: 'token'},
     user: {user: 'user'}
   };
@@ -21,7 +20,6 @@ describe('#RequestContext', () => {
   it('should initialize itself with provided options', () => {
     should(context.connectionId).eql('connectionId');
     should(context.protocol).eql('protocol');
-    should(context.headers).match({foo: 'bar'});
     should(context.token).match({token: 'token'});
     should(context.user).match({user: 'user'});
   });

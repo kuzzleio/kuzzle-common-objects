@@ -300,7 +300,6 @@ This constructor is used to create a connection context used by `Request`.
 |------|------|----------------------------------|
 | `connectionId` | `string` | Client's connection unique ID |
 | `protocol` | `string` | Network protocol name |
-| `headers` | `object` | request headers (ie. HTTP headers for HTTP an Websocket protocols) |
 | `token` | `object` | Kuzzle internal authorization token object |
 | `user` | `object` | Kuzzle internal user info object |
 
@@ -312,7 +311,6 @@ This constructor is used to create a connection context used by `Request`.
 |------|------|----------------------------------|
 | `connectionId` | `string` | Client's connection unique ID |
 | `protocol` | `string` | Network protocol name |
-| `headers` | `object` | request headers (ie. HTTP headers for HTTP an Websocket protocols) |
 | `token` | `object` | Kuzzle internal authorization token object |
 | `user` | `object` | Kuzzle internal user info object |
 
@@ -335,6 +333,7 @@ Contains the request's input data
 |`_id`|`string`| Document unique identifier |
 |`action`|`string`| Kuzzle action to perform |
 |`body`|`object`| Contains request specific data (document content, search queries, ...) |
+| `headers` | `object` | request headers (ie. HTTP headers for HTTP an Websocket protocols) |
 |`collection` |`string` | Data collection |
 |`controller` |`string`| Kuzzle controller handling the action to perform |
 |`index` |`string`| Data index |
@@ -352,6 +351,7 @@ Other attributes may be defined and will automatically be added to the `args` ob
 | `action` | `string` | `null` | Controller's action to execute |
 | `args` | `object` | *(empty)* | Contains specific request arguments |
 | `body` | `object` | `null` | Request's body (for instance, the content of a document) |
+| `headers` | `object` | request headers (ie. HTTP headers for HTTP an Websocket protocols) |
 | `controller` | `string` | `null` | Kuzzle's controller to invoke |
 | `volatile` | `object` | `null` | Request [volatile data](http://docs.kuzzle.io/api-reference/#sending-metadata) |
 | `resource._id` | `string` | `null` | Document unique identifier |
