@@ -185,7 +185,8 @@ describe('#Request', () => {
         volatile: {
           some: 'meta'
         },
-        foo: 'bar'
+        foo: 'bar',
+        headers: {foo: 'args.header'}
       },
       options = {
         status: 666,
@@ -195,7 +196,7 @@ describe('#Request', () => {
       request = new Request(data, options),
       serialized;
 
-    request.input.headers = {foo: 'bar'};
+    request.input.headers = {foo: 'input.header'};
     request.setResult(result);
     request.setError(error);
 
@@ -203,7 +204,7 @@ describe('#Request', () => {
 
     should(serialized.data.body).match({some: 'body'});
     should(serialized.data.volatile).match({some: 'meta'});
-    should(serialized.data.headers).match({foo: 'bar'});
+    should(serialized.data.headers).match({foo: 'args.header'});
     should(serialized.data.controller).be.eql('controller');
     should(serialized.data.action).be.eql('action');
     should(serialized.data.index).be.eql('idx');
@@ -217,6 +218,8 @@ describe('#Request', () => {
     should(serialized.options.error).match(error);
     should(serialized.options.result).match(result);
     should(serialized.options.status).be.eql(500);
+
+    should(serialized.headers).match({foo: 'input.header'});
 
     let newRequest = new Request(serialized.data, serialized.options);
     should(newRequest.response.toJSON()).match(request.response.toJSON());
