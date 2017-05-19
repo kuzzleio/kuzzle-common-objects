@@ -32,11 +32,12 @@ describe('#RequestInput', () => {
         _id: 'id',
         foo: 'bar',
         bar: 'foo',
-        jwt: 'a jwt token',
-        headers: {foo: 'bar'}
+        headers: {foo: 'args.header'},
+        jwt: 'a jwt token'
       },
       input = new RequestInput(data);
 
+    input.headers = {foo: 'input.header'};
     should(input.volatile).be.exactly(data.volatile);
     should(input.body).be.exactly(data.body);
     should(input.controller).eql('controller');
@@ -47,9 +48,10 @@ describe('#RequestInput', () => {
     should(input.resource._id).eql('id');
     should(input.args).match({
       foo: 'bar',
-      bar: 'foo'
+      bar: 'foo',
+      headers: {foo: 'args.header'},
     });
-    should(input.headers).match({foo: 'bar'});
+    should(input.headers).match({foo: 'input.header'});
   });
 
   it('should throw if invalid data is provided', () => {

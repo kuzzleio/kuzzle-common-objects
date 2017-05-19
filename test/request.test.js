@@ -185,17 +185,17 @@ describe('#Request', () => {
         volatile: {
           some: 'meta'
         },
-        foo: 'bar',
-        headers: {foo: 'bar'}
+        foo: 'bar'
       },
       options = {
         status: 666,
         connectionId: 'connectionId',
-        protocol: 'protocol',
+        protocol: 'protocol'
       },
       request = new Request(data, options),
       serialized;
 
+    request.input.headers = {foo: 'bar'};
     request.setResult(result);
     request.setError(error);
 

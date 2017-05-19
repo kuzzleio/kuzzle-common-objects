@@ -62,7 +62,6 @@ This constructor is used to transform an [API request](http://kuzzle.io/api-refe
 | `connectionId` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 | `error` | `KuzzleError` or `Error` | Invokes [setError](#seterrorerror) at initialization |
 | `protocol` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
-| `headers` | `object` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 | `requestId` | `string` | Initializes the `id` property |
 | `result` | *(varies)* | Invokes [setResult](#setresultresult-options--null) at initialization |
 | `status` | `integer` | HTTP error code |
@@ -333,7 +332,6 @@ Contains the request's input data
 |`_id`|`string`| Document unique identifier |
 |`action`|`string`| Kuzzle action to perform |
 |`body`|`object`| Contains request specific data (document content, search queries, ...) |
-| `headers` | `object` | request headers (ie. HTTP headers for HTTP an Websocket protocols) |
 |`collection` |`string` | Data collection |
 |`controller` |`string`| Kuzzle controller handling the action to perform |
 |`index` |`string`| Data index |
@@ -351,7 +349,7 @@ Other attributes may be defined and will automatically be added to the `args` ob
 | `action` | `string` | `null` | Controller's action to execute |
 | `args` | `object` | *(empty)* | Contains specific request arguments |
 | `body` | `object` | `null` | Request's body (for instance, the content of a document) |
-| `headers` | `object` | request headers (ie. HTTP headers for HTTP an Websocket protocols) |
+| `headers` | `object` | request input headers (e.g. HTTP headers for HTTP or Websocket protocols) |
 | `controller` | `string` | `null` | Kuzzle's controller to invoke |
 | `volatile` | `object` | `null` | Request [volatile data](http://docs.kuzzle.io/api-reference/#sending-metadata) |
 | `resource._id` | `string` | `null` | Document unique identifier |
