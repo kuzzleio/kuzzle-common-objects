@@ -18,7 +18,7 @@
   "scripts": {
     "test": "npm run --silent lint && npm run unit-testing --coverage",
     "unit-testing": "istanbul test _mocha",
-    "lint": "eslint --max-warnings=0 index.js ./errors ./models ./test",
+    "lint": "eslint --max-warnings=0 index.js ./lib ./test",
     "codecov": "codecov"
   },
   "repository": {
