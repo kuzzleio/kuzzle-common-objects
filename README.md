@@ -349,6 +349,7 @@ Other attributes may be defined and will automatically be added to the `args` ob
 | `action` | `string` | `null` | Controller's action to execute |
 | `args` | `object` | *(empty)* | Contains specific request arguments |
 | `body` | `object` | `null` | Request's body (for instance, the content of a document) |
+| `headers` | `object` | request input headers (e.g. HTTP headers for HTTP or Websocket protocols) |
 | `controller` | `string` | `null` | Kuzzle's controller to invoke |
 | `volatile` | `object` | `null` | Request [volatile data](http://docs.kuzzle.io/api-reference/#sending-metadata) |
 | `resource._id` | `string` | `null` | Document unique identifier |
