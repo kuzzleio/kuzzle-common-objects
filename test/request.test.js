@@ -175,6 +175,7 @@ describe('#Request', () => {
       result = {foo: 'bar'},
       error = new InternalError('foobar'),
       data = {
+        body: {some: 'body'},
         timestamp: 'timestamp',
         index: 'idx',
         collection: 'collection',
@@ -184,15 +185,41 @@ describe('#Request', () => {
         volatile: {
           some: 'meta'
         },
-        foo: 'bar'
+        foo: 'bar',
+        headers: {foo: 'args.header'}
       },
-      request = new Request(data),
+      options = {
+        status: 666,
+        connectionId: 'connectionId',
+        protocol: 'protocol'
+      },
+      request = new Request(data, options),
       serialized;
 
+    request.input.headers = {foo: 'input.header'};
     request.setResult(result);
     request.setError(error);
 
     serialized = request.serialize();
+
+    should(serialized.data.body).match({some: 'body'});
+    should(serialized.data.volatile).match({some: 'meta'});
+    should(serialized.data.headers).match({foo: 'args.header'});
+    should(serialized.data.controller).be.eql('controller');
+    should(serialized.data.action).be.eql('action');
+    should(serialized.data.index).be.eql('idx');
+    should(serialized.data.collection).be.eql('collection');
+    should(serialized.data._id).be.eql('id');
+    should(serialized.data.timestamp).be.eql('timestamp');
+    should(serialized.data.foo).be.eql('bar');
+
+    should(serialized.options.protocol).eql('protocol');
+    should(serialized.options.connectionId).be.eql('connectionId');
+    should(serialized.options.error).match(error);
+    should(serialized.options.result).match(result);
+    should(serialized.options.status).be.eql(500);
+
+    should(serialized.headers).match({foo: 'input.header'});
 
     let newRequest = new Request(serialized.data, serialized.options);
     should(newRequest.response.toJSON()).match(request.response.toJSON());
