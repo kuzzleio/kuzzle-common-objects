@@ -41,6 +41,37 @@ describe('#Request', () => {
     should(request.status).eql(666);
     should(request.result).be.exactly(result);
     should(request.error).be.exactly(error);
+    should(request.error).be.instanceOf(KuzzleError);
+    should(request.error.message).be.exactly(error.message);
+    should(request.error.stack).be.exactly(error.stack);
+    should(request.error.status).be.exactly(request.error.status);
+    should(request.context.protocol).eql('protocol');
+    should(request.context.connectionId).eql('connectionId');
+    should(request.context.token).match({token: 'token'});
+    should(request.context.user).match({user: 'user'});
+  });
+
+  it('should instanciate a new KuzzleError object from a serialized error', () => {
+    let
+      result = {foo: 'bar'},
+      error = new InternalError('foobar'),
+      options = {
+        status: 666,
+        result,
+        error: error.toJSON(),
+        connectionId: 'connectionId',
+        protocol: 'protocol',
+        token: {token: 'token'},
+        user: { user: 'user' }
+      },
+      request = new Request({}, options);
+
+    should(request.status).eql(666);
+    should(request.result).be.exactly(result);
+    should(request.error).be.instanceOf(KuzzleError);
+    should(request.error.message).be.exactly(error.message);
+    should(request.error.stack).be.exactly(error.stack);
+    should(request.error.status).be.exactly(request.error.status);
     should(request.context.protocol).eql('protocol');
     should(request.context.connectionId).eql('connectionId');
     should(request.context.token).match({token: 'token'});
