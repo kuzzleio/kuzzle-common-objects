@@ -13,6 +13,7 @@ Common objects shared to various Kuzzle components and plugins.
     - [Methods](#methods)
       - [`serialize()`](#serialize)
       - [`setError(error)`](#seterrorerror)
+      - [`clearError()`](#clearerror)
       - [`setResult(result, [options = null])`](#setresultresult-options--null)
     - [Example](#example)
   - [`RequestResponse`](#requestresponse)
@@ -132,6 +133,10 @@ Adds an error to the request, and sets the request's status to the error one.
 If a `KuzzleError` is provided, the request's status attribute is set to the error one.
 
 Otherwise, the provided error is encapsulated into a [InternalError](#errorsinternalerror) object, and the request's status is set to 500.
+
+#### `clearError()`
+
+Clear error from request: set `error` to null and set `status` to 200. 
 
 #### `setResult(result, [options = null])`
 

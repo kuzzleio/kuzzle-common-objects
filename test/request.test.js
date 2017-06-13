@@ -341,4 +341,36 @@ describe('#Request', () => {
     should(() => { request.origin = true; }).throw(InternalError);
     should(() => { request.origin = 123; }).throw(InternalError);
   });
+
+  it('should clear the request error and status correctly', () => {
+    const
+      result = {foo: 'bar'},
+      error = new InternalError('foobar'),
+      data = {
+        body: {some: 'body'},
+        timestamp: 'timestamp',
+        index: 'idx',
+        collection: 'collection',
+        controller: 'controller',
+        action: 'action',
+        _id: 'id',
+        volatile: {
+          some: 'meta'
+        },
+        foo: 'bar',
+        headers: {foo: 'args.header'}
+      },
+      request = new Request(data);
+
+    request.input.headers = {foo: 'input.header'};
+    request.setResult(result);
+    request.setError(error);
+
+    should(request.error).be.instanceOf(InternalError);
+
+    request.clearError();
+
+    should(request.error).be.eql(null);
+    should(request.status).eql(200);
+  });
 });
