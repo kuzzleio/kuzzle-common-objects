@@ -11,8 +11,8 @@ describe('#PartialError', () => {
     should(err.message).be.eql('foobar');
     should(err.status).be.eql(206);
     should(err.name).be.eql('PartialError');
-    should(err.errors).be.undefined();
-    should(err.count).be.undefined();
+    should(err.errors).be.an.Array().and.be.empty();
+    should(err.count).be.eql(0);
   });
 
   it('should create a well-formed object with a body provided', () => {
