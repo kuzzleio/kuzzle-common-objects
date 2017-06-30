@@ -3,7 +3,7 @@
   "description": "Common objects shared to various Kuzzle components and plugins",
   "main": "./index.js",
   "author": "The Kuzzle Team <support@kuzzle.io>",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "dependencies": {
     "uuid": "^3.0.0"
   },
