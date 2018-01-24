@@ -99,7 +99,7 @@ describe('#Request', () => {
     should(rq.error).be.exactly(foo);
     should(rq.status).eql(666);
 
-    should(rq.error.toJSON()).match(foo);
+    should(rq.error.toJSON()).match({status: foo.status, message: foo.message});
   });
 
   it('should wrap a plain Error object into an InternalError one', () => {
