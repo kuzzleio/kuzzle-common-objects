@@ -1,6 +1,5 @@
 --bail
 --reporter spec
 --recursive
---no-exit
 --slow 2000
 --timeout 10000
