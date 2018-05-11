@@ -17,7 +17,7 @@ describe('#RequestInput', () => {
     should(input.resource._id).be.null();
     should(input.args).be.an.Object().and.be.empty();
     should(input.jwt).be.null();
-    should(input.headers).be.null();
+    should(input.headers).be.an.Object().and.be.empty();
   });
 
   it('should dispatch data correctly across properties', () => {
