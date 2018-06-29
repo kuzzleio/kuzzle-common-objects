@@ -11,13 +11,13 @@
   "devDependencies": {
     "codecov": "^3.0.2",
     "eslint": "5.0.1",
-    "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
     "should": "^13.2.1"
   },
   "scripts": {
-    "test": "npm run --silent lint && npm run unit-testing --coverage",
-    "unit-testing": "istanbul test _mocha",
+    "test": "npm run --silent lint && npm run unit-testing",
+    "unit-testing": "nyc --reporter=text-summary --reporter=lcov mocha",
     "lint": "eslint --max-warnings=0 index.js ./lib ./test",
     "codecov": "codecov"
   },
