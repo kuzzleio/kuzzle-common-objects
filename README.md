@@ -294,8 +294,7 @@ This constructor is used to create a connection context used by `Request`.
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
-| `connectionId` | `string` | Client's connection unique ID |
-| `protocol` | `string` | Network protocol name |
+| `connection` | `object` | Connection information |
 | `token` | `object` | Kuzzle internal authorization token object |
 | `user` | `object` | Kuzzle internal user info object |
 
@@ -305,10 +304,20 @@ This constructor is used to create a connection context used by `Request`.
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
-| `connectionId` | `string` | Client's connection unique ID |
-| `protocol` | `string` | Network protocol name |
+| `connection` | `object` | Connection information |
+| `connectionId` | `string` | (*deprecated* use `connection.id` instead) Client's connection unique ID |
+| `protocol` | `string` | (*deprecated* use `connection.protocol` instead) Network protocol name |
 | `token` | `object` | Kuzzle internal authorization token object |
 | `user` | `object` | Kuzzle internal user info object |
+
+##### RequestContext.Connection object format
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `id` | `string` | Connection unique identifier |
+| `protocol` | `string` | Protocol name (e.g. 'http', 'websocket', 'mqtt', ...) |
+| `ips` | `array` | Array of known IP addresses for the connection |
+| `misc` | `object` | Contain additional connection properties, depending on the connection's protocol used |
 
 ## `models.RequestInput`
 
