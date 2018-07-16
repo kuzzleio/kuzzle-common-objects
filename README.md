@@ -60,9 +60,8 @@ This constructor is used to transform an [API request](http://kuzzle.io/api-refe
 
 | Name | Type | Description                      |
 |------|------|----------------------------------|
-| `connectionId` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
+| `connection` | `object` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 | `error` | `KuzzleError` or `Error` | Invokes [setError](#seterrorerror) at initialization |
-| `protocol` | `string` | Passed to [RequestContext](#modelsrequestcontext) constructor |
 | `requestId` | `string` | Initializes the `id` property |
 | `result` | *(varies)* | Invokes [setResult](#setresultresult-options--null) at initialization |
 | `status` | `integer` | HTTP error code |
@@ -155,7 +154,7 @@ The `options` argument may contain the following properties:
 const Request = require('kuzzle-common-objects').Request;
 
 let request = new Request({
-  controller: 'write',
+  controller: 'document',
   action: 'create',
   index: 'foo',
   collection: 'bar',
@@ -175,24 +174,32 @@ console.dir(request.serialize(), {depth: null});
 Result:
 
 ```
-{ data:
-   { timestamp: 1482143102957,
-     requestId: '26d4ec6d-aafb-4ef8-951d-47666e5cf3ba',
-     jwt: null,
-     volatile: { some: 'volatile data' },
-     body: { document: 'content' },
-     controller: 'write',
-     action: 'create',
-     index: 'foo',
-     collection: 'bar',
-     _id: 'some document ID',
-     foo: 'bar' },
-  options:
-   { connectionId: null,
-     protocol: null,
-     result: null,
-     error: null,
-     status: 102 } }
+{ 
+  data: { 
+    timestamp: 1482143102957,
+    requestId: '26d4ec6d-aafb-4ef8-951d-47666e5cf3ba',
+    jwt: null,
+    volatile: { some: 'volatile data' },
+    body: { document: 'content' },
+    controller: 'document',
+    action: 'create',
+    index: 'foo',
+    collection: 'bar',
+    _id: 'some document ID',
+    foo: 'bar' 
+  },
+  options: { 
+    connection: {
+      id: null,
+      protocol: null,
+      ips: [],
+      misc: {}
+    },
+   result: null,
+   error: null,
+   status: 102 
+  } 
+}
 ```
 
 ## `RequestResponse`
@@ -207,7 +214,7 @@ Header names are case insensitive.
 **Example**
 
 ```
-if (request.context.protocol === 'http') {
+if (request.context.connection.protocol === 'http') {
   request.response.setHeader('Content-Type', 'text/plain');
 }
 ```
@@ -317,7 +324,7 @@ This constructor is used to create a connection context used by `Request`.
 | `id` | `string` | Connection unique identifier |
 | `protocol` | `string` | Protocol name (e.g. 'http', 'websocket', 'mqtt', ...) |
 | `ips` | `array` | Array of known IP addresses for the connection |
-| `misc` | `object` | Contain additional connection properties, depending on the connection's protocol used |
+| `misc` | `object` | Contain additional connection properties, depending on the connection's protocol used (for instance, input HTTP headers) |
 
 ## `models.RequestInput`
 
