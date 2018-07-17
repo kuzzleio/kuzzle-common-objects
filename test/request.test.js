@@ -216,18 +216,22 @@ describe('#Request', () => {
         volatile: {
           some: 'meta'
         },
-        foo: 'bar',
-        headers: {foo: 'args.header'}
+        foo: 'bar'
       },
       options = {
         status: 666,
-        connectionId: 'connectionId',
-        protocol: 'protocol'
+        connection: {
+          id: 'connectionId',
+          protocol: 'protocol',
+          url: 'url',
+          foobar: 'barfoo',
+          ips: ['i', 'p', 's'],
+          headers: {foo: 'args.headers'}
+        }
       },
       request = new Request(data, options),
       serialized;
 
-    request.input.headers = {foo: 'input.header'};
     request.setResult(result);
     request.setError(error);
 
@@ -235,7 +239,6 @@ describe('#Request', () => {
 
     should(serialized.data.body).match({some: 'body'});
     should(serialized.data.volatile).match({some: 'meta'});
-    should(serialized.data.headers).match({foo: 'args.header'});
     should(serialized.data.controller).be.eql('controller');
     should(serialized.data.action).be.eql('action');
     should(serialized.data.index).be.eql('idx');
@@ -244,15 +247,15 @@ describe('#Request', () => {
     should(serialized.data.timestamp).be.eql('timestamp');
     should(serialized.data.foo).be.eql('bar');
 
-    should(serialized.options.protocol).eql('protocol');
-    should(serialized.options.connectionId).be.eql('connectionId');
+    should(serialized.options.connection).match(options.connection);
+
     should(serialized.options.error).match(error);
     should(serialized.options.result).match(result);
     should(serialized.options.status).be.eql(500);
 
-    should(serialized.headers).match({foo: 'input.header'});
+    should(serialized.headers).match({foo: 'args.headers'});
 
-    let newRequest = new Request(serialized.data, serialized.options);
+    const newRequest = new Request(serialized.data, serialized.options);
     should(newRequest.response.toJSON()).match(request.response.toJSON());
     should(newRequest.timestamp).be.eql('timestamp');
   });
