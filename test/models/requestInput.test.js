@@ -46,7 +46,7 @@ describe('#RequestInput', () => {
     should(input.resource.index).eql('index');
     should(input.resource.collection).eql('collection');
     should(input.resource._id).eql('id');
-    should(input.args).match({
+    should(input.args).deepEqual({
       foo: 'bar',
       bar: 'foo',
       headers: {foo: 'args.header'},
