@@ -3,17 +3,17 @@
   "description": "Common objects shared to various Kuzzle components and plugins",
   "main": "./index.js",
   "author": "The Kuzzle Team <support@kuzzle.io>",
-  "version": "3.0.10",
+  "version": "3.0.11",
   "dependencies": {
     "uuid": "^3.3.2"
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "codecov": "^3.0.2",
-    "eslint": "5.0.1",
+    "codecov": "^3.0.4",
+    "eslint": "5.2.0",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",
-    "should": "^13.2.1"
+    "should": "^13.2.2"
   },
   "scripts": {
     "test": "npm run --silent lint && npm run unit-testing",

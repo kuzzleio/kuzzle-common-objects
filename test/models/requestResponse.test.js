@@ -30,7 +30,7 @@ describe('#RequestResponse', () => {
       should(response.collection).be.exactly(req.input.resource.collection);
       should(response.index).be.exactly(req.input.resource.index);
       should(response.volatile).be.exactly(req.input.volatile);
-      should(response.headers).be.exactly(req[Symbol.for('request.response.headers')]);
+      should(response.headers).be.exactly(req['responseHeaders\u200b']);
       should(response.result).be.exactly(req.result);
     });
 
