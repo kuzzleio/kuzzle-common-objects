@@ -2,7 +2,7 @@
 
 const
   should = require('should'),
-  RequestInput = require.main.require('lib/models/requestInput');
+  RequestInput = require('../../lib/models/requestInput');
 
 describe('#RequestInput', () => {
   it('should defaults to null all properties', () => {

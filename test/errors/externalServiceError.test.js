@@ -2,7 +2,7 @@
 
 const
   should = require('should'),
-  ExternalServiceError = require.main.require('lib/errors/externalServiceError');
+  ExternalServiceError = require('../../lib/errors/externalServiceError');
 
 describe('#ExternalServiceError', () => {
   it('should create a well-formed object', () => {
