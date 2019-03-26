@@ -2,11 +2,11 @@
 
 const
   should = require('should'),
-  KuzzleError = require.main.require('lib/errors/kuzzleError'),
-  InternalError = require.main.require('lib/errors/internalError'),
-  Request = require.main.require('lib/request'),
-  RequestContext = require.main.require('lib/models/requestContext'),
-  RequestInput = require.main.require('lib/models/requestInput');
+  KuzzleError = require('../lib/errors/kuzzleError'),
+  InternalError = require('../lib/errors/internalError'),
+  Request = require('../lib/request'),
+  RequestContext = require('../lib/models/requestContext'),
+  RequestInput = require('../lib/models/requestInput');
 
 describe('#Request', () => {
   let rq;

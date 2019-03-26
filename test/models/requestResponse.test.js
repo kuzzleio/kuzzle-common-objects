@@ -87,14 +87,14 @@ describe('#RequestResponse', () => {
 
       // set-cookie is a special key stored as an array
       response.setHeader('Set-Cookie', 'test');
-      should(response.headers['set-cookie'])
+      should(response.headers['Set-Cookie'])
         .be.an.Array()
         .have.length(1);
-      should(response.headers['set-cookie'][0])
+      should(response.headers['Set-Cookie'][0])
         .be.exactly('test');
 
       response.setHeader('Set-Cookie', 'test2');
-      should(response.headers['set-cookie'][1])
+      should(response.headers['Set-Cookie'][1])
         .be.exactly('test2');
 
       // special headers cannot be duplicated
@@ -124,11 +124,10 @@ describe('#RequestResponse', () => {
 
       // regular headers value are coma separated
       response.setHeader('X-Baz', 'Foo');
-      response.setHeader('x-bAZ', 'Bar');
+      response.setHeader('X-Baz', 'Bar');
 
       should(response.headers['X-Baz'])
         .be.exactly('Foo, Bar');
-
 
       // setHeaders adds received headers to current ones
       response.setHeaders({

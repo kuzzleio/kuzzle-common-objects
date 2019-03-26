@@ -2,7 +2,7 @@
 
 const
   should = require('should'),
-  RequestContext = require.main.require('lib/models/requestContext');
+  RequestContext = require('../../lib/models/requestContext');
 
 describe('#RequestContext', () => {
   const args = {
