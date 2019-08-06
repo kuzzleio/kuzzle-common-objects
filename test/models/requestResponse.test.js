@@ -76,26 +76,28 @@ describe('#RequestResponse', () => {
       response = new RequestResponse(req);
     });
 
-    it('should set headers', () => {
+    it('should set headers without changing their names', () => {
       response.setHeader('X-Foo', 'Bar');
       response.setHeader('X-Bar', 'Baz');
 
       should(response.headers).match({
-        'x-foo': 'Bar',
-        'x-bar': 'Baz'
+        'X-Foo': 'Bar',
+        'X-Bar': 'Baz'
       });
+    });
 
-      // set-cookie is a special key stored as an array
+    it('should store cookies in an array', () => {
       response.setHeader('Set-Cookie', 'test');
-      should(response.headers['set-cookie'])
+      should(response.headers['Set-Cookie'])
         .be.an.Array()
         .have.length(1);
-      should(response.headers['set-cookie'][0]).be.exactly('test');
+      should(response.headers['Set-Cookie'][0]).be.exactly('test');
 
       response.setHeader('Set-Cookie', 'test2');
-      should(response.headers['set-cookie'][1]).be.exactly('test2');
+      should(response.headers['Set-Cookie'][1]).be.exactly('test2');
+    });
 
-      // special headers cannot be duplicated
+    it('should overwrite common HTTP headers when submitting new values', () => {
       [
         'age',
         'authorization',
@@ -114,39 +116,60 @@ describe('#RequestResponse', () => {
         'retry-after',
         'user-agent'
       ].forEach(name => {
-        response.setHeader(name.toUpperCase(), 'foobar');
-        response.setHeader(name, 'foobar');
+        for (let i = 0; i < 10; i++) {
+          response.setHeader(name, `foobar${i}`);
+        }
 
-        should(response.headers[name]).be.exactly('foobar');
-        should(response.headers[name.toUpperCase()]).be.undefined();
+        should(response.headers[name]).be.exactly(
+          'foobar9',
+          `Header tested: ${name}`);
       });
+    });
 
-      // regular headers value are coma separated
+    it('should not duplicate header keys', () => {
+      [ 'Content-Length', 'X-Foo', 'Set-Cookie' ].forEach(name => {
+        response.setHeader(name, 'foo');
+        response.setHeader(name.toLowerCase(), 'bar');
+        response.setHeader(name.toUpperCase(), 'baz');
+
+        should(response.headers)
+          .have.property(name)
+          .and.not.have.property(name.toLowerCase())
+          .and.not.have.property(name.toUpperCase());
+      });
+    });
+
+    it('should add values to existing regular headers', () => {
       response.setHeader('X-Baz', 'Foo');
-      response.setHeader('x-bAZ', 'Bar');
+      response.setHeader('X-Baz', 'Bar');
 
-      should(response.headers['x-baz'])
-        .be.exactly('Foo, Bar');
+      should(response.headers['X-Baz']).be.exactly('Foo, Bar');
+    });
 
-      // setHeaders adds received headers to current ones
-      response.setHeaders({
-        test: 'test',
-        banana: '42'
-      });
+    it('should set multiple headers to the existing headers', () => {
+      response.setHeader('X-Foo', 'foo');
+      response.setHeader('test', 'test');
 
-      should(response.headers).have.property('x-foo');
-      should(response.headers).have.property('test', 'test');
+      response.setHeaders({ test: 'test', banana: '42' });
+
+      should(response.headers).have.property('X-Foo');
+      should(response.headers).have.property('test', 'test, test');
       should(response.headers).have.property('banana', '42');
+    });
 
-      // setHeaders does nothing if null is given
+    it('should do nothing if a null header is provided', () => {
       response.setHeaders(null);
 
-      // removeHeader
-      response.removeHeader('X-Foo');
-      should(response.headers).not.have.property('x-foo');
+      should(response.headers).be.empty();
+    });
 
-      // getHeader should be case-insensitive
-      should(response.getHeader('x-bAr')).be.exactly('Baz');
+    it('should throw if a duplicate header is found when setting a header', () => {
+      response.headers.oh = 'noes11!1';
+      response.headers.OH = 'NOES!!1!';
+
+      should(() => response.setHeader('Oh', 'Noes')).throw(
+        BadRequestError,
+        {message: 'Duplicate headers: oh,OH'});
     });
 
     it('should throw if setHeader is called with non-string names', () => {
@@ -176,13 +199,81 @@ describe('#RequestResponse', () => {
         ['baz', true, null],
         null,
         undefined
-      ].forEach(param => {
-        response.setHeader('test', param);
+      ].forEach(value => {
+        response.setHeader('test', value);
 
-        should(response.headers.test).eql(String(param));
+        should(response.headers.test).eql(String(value));
 
         response.removeHeader('test');
       });
+    });
+  });
+
+  describe('removeHeader', () => {
+    let response;
+
+    beforeEach(() => {
+      response = new RequestResponse(req);
+    });
+
+    it('should remove the asked header', () => {
+      response.setHeader('X-Foo', 'foo');
+      response.setHeader('X-Bar', 'bar');
+
+      response.removeHeader('X-Foo');
+
+      should(response.headers).not.have.property('X-Foo');
+      should(response.headers).have.property('X-Bar', 'bar');
+    });
+
+    it('should remove the asked header (case insensitive)', () => {
+      response.setHeader('X-Foo', 'foo');
+      response.setHeader('X-Bar', 'bar');
+
+      response.removeHeader('x-fOO');
+
+      should(response.headers).not.have.property('X-Foo');
+      should(response.headers).have.property('X-Bar', 'bar');
+    });
+
+    it('should throw if trying to remove a duplicate header', () => {
+      response.headers['X-Foo'] = 'foo';
+      response.headers['x-fOO'] = 'foo';
+
+      should(() => response.removeHeader('X-Foo')).throw(
+        BadRequestError,
+        {message: 'Duplicate headers: X-Foo,x-fOO'});
+    });
+  });
+
+  describe('getHeader', () => {
+    let response;
+
+    beforeEach(() => {
+      response = new RequestResponse(req);
+    });
+
+    it('should fetch the asked header', () => {
+      response.setHeader('X-Foo', 'foo');
+      response.setHeader('X-Bar', 'bar');
+
+      should(response.getHeader('X-Foo')).eql('foo');
+    });
+
+    it('should fetch the asked header (case insensitive)', () => {
+      response.setHeader('X-Foo', 'foo');
+      response.setHeader('X-Bar', 'bar');
+
+      should(response.getHeader('x-fOO')).eql('foo');
+    });
+
+    it('should throw if trying to fetch a duplicate header', () => {
+      response.headers['X-Foo'] = 'foo';
+      response.headers['x-fOO'] = 'foo';
+
+      should(() => response.getHeader('X-Foo')).throw(
+        BadRequestError,
+        {message: 'Duplicate headers: X-Foo,x-fOO'});
     });
   });
 

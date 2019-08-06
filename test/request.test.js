@@ -199,13 +199,7 @@ describe('#Request', () => {
     should(response.index).eql(data.index);
     should(response.volatile).match(data.volatile);
     should(response.result).be.exactly(result);
-
-    const expectedHeaders = {};
-    for (const header of Object.keys(responseHeaders)) {
-      expectedHeaders[header.toLowerCase()] = responseHeaders[header];
-    }
-
-    should(response.headers).match(expectedHeaders);
+    should(response.headers).match(responseHeaders);
   });
 
   it('should serialize the request correctly', () => {
