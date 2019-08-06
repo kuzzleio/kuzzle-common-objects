@@ -1,33 +1,9 @@
 const
   should = require('should'),
   assert = require('../../lib/utils/assertType'),
-  ParseError = require('../../lib/errors/parseError');
+  BadRequestError = require('../../lib/errors/badRequestError');
 
 describe('#assertType', () => {
-  describe('#assertUnitTypeObject', () => {
-    it('should infer the type from the first property', () => {
-      should(() => {
-        assert.assertUniTypeObject('test', {
-          foo: ['bar'],
-          baz: true
-        });
-
-      }).throw(ParseError);
-    });
-
-    it('should detect object of arrays', () => {
-      const data = {
-        a: [1],
-        b: [2, 4],
-        c: 42,
-
-      };
-
-      should(() => assert.assertUniTypeObject('test', data, 'array'))
-        .throw(ParseError);
-    });
-  });
-
   describe('#assertArray', () => {
     it('should return an empty array if null/undefined is provided', () => {
       should(assert.assertArray('foo', null, 'string')).eql([]);
@@ -50,7 +26,7 @@ describe('#assertType', () => {
     it('should throw if the provided data is not an array', () => {
       for (const wrong of [{}, 'foo', 123, true, false]) {
         should(() => assert.assertArray('foo', wrong, 'string'))
-          .throw(ParseError, {message: 'Attribute foo must be of type "array"'});
+          .throw(BadRequestError, {message: 'Attribute foo must be of type "array"'});
       }
     });
 
@@ -58,7 +34,7 @@ describe('#assertType', () => {
       for (const wrong of [{}, [], 123, true, false]) {
         const arr = ['foo', wrong, 'bar'];
         should(() => assert.assertArray('foo', arr, 'string'))
-          .throw(ParseError, {message: 'Attribute foo must contain only values of type "string"'});
+          .throw(BadRequestError, {message: 'Attribute foo must contain only values of type "string"'});
       }
     });
   });
