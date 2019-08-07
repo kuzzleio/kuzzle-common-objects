@@ -30,7 +30,7 @@ describe('#RequestResponse', () => {
       should(response.collection).be.exactly(req.input.resource.collection);
       should(response.index).be.exactly(req.input.resource.index);
       should(response.volatile).be.exactly(req.input.volatile);
-      should(response.headers).be.exactly(req['responseHeaders\u200b']);
+      should(response.headers).be.an.Object().and.be.empty();
       should(response.result).be.exactly(req.result);
     });
 
@@ -163,13 +163,17 @@ describe('#RequestResponse', () => {
       should(response.headers).be.empty();
     });
 
-    it('should throw if a duplicate header is found when setting a header', () => {
+    it('should merge duplicates when injecting properties directly into the object', () => {
       response.headers.oh = 'noes11!1';
       response.headers.OH = 'NOES!!1!';
 
-      should(() => response.setHeader('Oh', 'Noes')).throw(
-        BadRequestError,
-        {message: 'Duplicate headers: oh,OH'});
+      should(response.headers.oh).eql('noes11!1, NOES!!1!');
+      should(response.headers.OH).eql('noes11!1, NOES!!1!');
+
+      const headersPOJO = JSON.parse(JSON.stringify(response.headers));
+
+      should(headersPOJO.oh).eql('noes11!1, NOES!!1!');
+      should(headersPOJO.OH).be.undefined();
     });
 
     it('should throw if setHeader is called with non-string names', () => {
@@ -235,15 +239,6 @@ describe('#RequestResponse', () => {
       should(response.headers).not.have.property('X-Foo');
       should(response.headers).have.property('X-Bar', 'bar');
     });
-
-    it('should throw if trying to remove a duplicate header', () => {
-      response.headers['X-Foo'] = 'foo';
-      response.headers['x-fOO'] = 'foo';
-
-      should(() => response.removeHeader('X-Foo')).throw(
-        BadRequestError,
-        {message: 'Duplicate headers: X-Foo,x-fOO'});
-    });
   });
 
   describe('getHeader', () => {
@@ -265,15 +260,6 @@ describe('#RequestResponse', () => {
       response.setHeader('X-Bar', 'bar');
 
       should(response.getHeader('x-fOO')).eql('foo');
-    });
-
-    it('should throw if trying to fetch a duplicate header', () => {
-      response.headers['X-Foo'] = 'foo';
-      response.headers['x-fOO'] = 'foo';
-
-      should(() => response.getHeader('X-Foo')).throw(
-        BadRequestError,
-        {message: 'Duplicate headers: X-Foo,x-fOO'});
     });
   });
 
