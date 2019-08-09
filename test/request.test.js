@@ -4,6 +4,7 @@ const
   should = require('should'),
   KuzzleError = require('../lib/errors/kuzzleError'),
   InternalError = require('../lib/errors/internalError'),
+  BadRequestError = require('../lib/errors/badRequestError'),
   Request = require('../lib/request'),
   RequestContext = require('../lib/models/requestContext'),
   RequestInput = require('../lib/models/requestInput');
@@ -146,10 +147,11 @@ describe('#Request', () => {
   });
 
   it('should throw if trying to set some non-object headers', () => {
-    should(() => { rq.setResult('foobar', {headers: 42}); }).throw('Attribute headers must be of type "object"');
-    should(() => { rq.setResult('foobar', {headers: { a: true }}); }).throw('Attribute headers must be of type "object" and have all its properties of type string.\nExpected "headers.a" to be of type "string", but go "boolean".');
-    should(() => { rq.setResult('foobar', {headers:  'bar'}); }).throw('Attribute headers must be of type "object"');
-    should(() => { rq.setResult('foobar', {headers:  true}); }).throw('Attribute headers must be of type "object"');
+    [ 42, [true, false], 'bar', true ].forEach(value => {
+      should(() => rq.setResult('foobar', {headers: value})).throw(
+        BadRequestError,
+        {message: 'Attribute headers must be of type "object"'});
+    });
   });
 
   it('should set the raw response indicator if provided', () => {
@@ -164,7 +166,7 @@ describe('#Request', () => {
   });
 
   it('should build a well-formed response', () => {
-    let
+    const
       result = {foo: 'bar'},
       responseHeaders = {
         'X-Foo': 'bar',
@@ -181,13 +183,12 @@ describe('#Request', () => {
           some: 'meta'
         }
       },
-      request = new Request(data),
-      response;
+      request = new Request(data);
 
     request.setResult(result, {status: 201, headers: responseHeaders});
     request.setError(error);
 
-    response = request.response;
+    const response = request.response;
 
     should(response.status).eql(500);
     should(response.error).be.exactly(error);
@@ -197,8 +198,8 @@ describe('#Request', () => {
     should(response.collection).eql(data.collection);
     should(response.index).eql(data.index);
     should(response.volatile).match(data.volatile);
-    should(response.headers).match(responseHeaders);
     should(response.result).be.exactly(result);
+    should(response.headers).match(responseHeaders);
   });
 
   it('should serialize the request correctly', () => {
