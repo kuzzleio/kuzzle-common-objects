@@ -5,12 +5,12 @@
   "author": "The Kuzzle Team <support@kuzzle.io>",
   "version": "3.0.15",
   "dependencies": {
+    "eslint": "^5.16.0",
     "uuid": "^3.3.3"
   },
   "license": "Apache-2.0",
   "devDependencies": {
     "codecov": "^3.5.0",
-    "eslint": "6.3.0",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
     "should": "^13.2.3"
