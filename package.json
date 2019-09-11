@@ -3,16 +3,16 @@
   "description": "Common objects shared to various Kuzzle components and plugins",
   "main": "./index.js",
   "author": "The Kuzzle Team <support@kuzzle.io>",
-  "version": "3.0.14",
+  "version": "3.0.15",
   "dependencies": {
-    "uuid": "^3.3.2"
+    "eslint": "^5.16.0",
+    "uuid": "^3.3.3"
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "codecov": "^3.2.0",
-    "eslint": "5.15.3",
-    "mocha": "^6.0.2",
-    "nyc": "^13.3.0",
+    "codecov": "^3.5.0",
+    "mocha": "^6.2.0",
+    "nyc": "^14.1.1",
     "should": "^13.2.3"
   },
   "scripts": {
