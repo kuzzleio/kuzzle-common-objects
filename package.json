@@ -3,7 +3,7 @@
   "description": "Common objects shared to various Kuzzle components and plugins",
   "main": "./index.js",
   "author": "The Kuzzle Team <support@kuzzle.io>",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "dependencies": {
     "eslint": "^5.16.0",
     "uuid": "^3.3.3"
