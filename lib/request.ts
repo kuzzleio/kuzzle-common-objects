@@ -1,12 +1,13 @@
 'use strict';
 
-const { v4: uuidv4 } = require('uuid');
-const assert = require('./utils/assertType');
-const RequestContext = require('./models/requestContext');
-const RequestInput = require('./models/requestInput');
-const RequestResponse = require('./models/requestResponse');
-const KuzzleError = require('./errors/kuzzleError');
-const InternalError = require('./errors/internalError');
+import * as uuid from 'uuid';
+
+import { RequestInput } from './models/requestInput';
+import { RequestResponse } from './models/requestResponse';
+import { RequestContext } from './models/requestContext';
+import { KuzzleError, InternalError } from './errors';
+import { JSONObject } from './utils/interfaces';
+import * as assert from './utils/assertType';
 
 // private properties
 // \u200b is a zero width space, used to masquerade console.log output
@@ -84,9 +85,11 @@ const _response = 'response\u200b';
  * @name Request#context
  * @type {RequestContext}
  */
-class Request {
+export class Request {
+  public id: string;
+
   constructor(data, options) {
-    this[_internalId] = uuidv4();
+    this[_internalId] = uuid.v4();
     this[_status] = 102;
     this[_input] = new RequestInput(data);
     this[_context] = new RequestContext(options);
@@ -100,7 +103,7 @@ class Request {
 
     this.id = data.requestId
       ? assert.assertString('requestId', data.requestId)
-      : uuidv4();
+      : uuid.v4();
 
     this[_timestamp] = data.timestamp || Date.now();
 
@@ -121,7 +124,7 @@ class Request {
        * been specified.
        */
       if (options.result) {
-        this.setResult(options.result, options.status, options.responseHeaders);
+        this.setResult(options.result, options);
       }
 
       if (options.error) {
@@ -151,7 +154,7 @@ class Request {
    * Request internal identifier getter
    * @return {string}
    */
-  get internalId () {
+  get internalId (): string {
     return this[_internalId];
   }
 
@@ -159,7 +162,7 @@ class Request {
    * Request timestamp getter
    * @returns {number}
    */
-  get timestamp () {
+  get timestamp (): number {
     return this[_timestamp];
   }
 
@@ -167,7 +170,7 @@ class Request {
    * Request status getter
    * @returns {number}
    */
-  get status () {
+  get status (): number {
     return this[_status];
   }
 
@@ -175,7 +178,7 @@ class Request {
    * Request status setter
    * @param {number} i - new request status
    */
-  set status (i) {
+  set status (i: number) {
     this[_status] = assert.assertInteger('status', i);
   }
 
@@ -183,7 +186,7 @@ class Request {
    * Request input getter
    * @returns {RequestInput}
    */
-  get input () {
+  get input (): RequestInput {
     return this[_input];
   }
 
@@ -199,7 +202,7 @@ class Request {
    * Request error getter
    * @returns {null|KuzzleError}
    */
-  get error () {
+  get error (): KuzzleError | null {
     return this[_error];
   }
 
@@ -207,7 +210,7 @@ class Request {
    * Request result getter
    * @returns {null|*}
    */
-  get result () {
+  get result (): any | null {
     return this[_result];
   }
 
@@ -215,7 +218,7 @@ class Request {
    * Request response getter
    * @returns {{status: (number|*), error: (null|*), requestId: string, controller: string, action: string, collection: string, index: string, volatile: Object, headers: (Array|*), result: (null|*|Object)}}
    */
-  get response () {
+  get response (): RequestResponse {
     if (this[_response] === null) {
       this[_response] = new RequestResponse(this);
     }
@@ -229,7 +232,7 @@ class Request {
    * @param {Object} error
    * @memberOf Request
    */
-  setError(error) {
+  setError (error: KuzzleError) {
     if (!error || !(error instanceof Error)) {
       throw new InternalError('cannot set non-error object as a request\'s error');
     }
@@ -244,7 +247,7 @@ class Request {
    * @name clearError
    * @memberOf Request
    */
-  clearError() {
+  clearError () {
     this[_error] = null;
     this.status = 200;
   }
@@ -262,7 +265,7 @@ class Request {
    * @param {Object} [options] - response options
    * @memberOf Request
    */
-  setResult(result, options) {
+  setResult(result: any, options: any) {
     options = options || {};
 
     if (result instanceof Error) {
@@ -290,7 +293,7 @@ class Request {
    * @return {object}
    * @memberOf Request
    */
-  serialize() {
+  serialize (): JSONObject {
     const serialized = {
       data: {
         timestamp: this[_timestamp],
@@ -320,8 +323,4 @@ class Request {
   }
 }
 
-
-/**
- * @type {Request}
- */
-module.exports = Request;
+module.exports = { Request };

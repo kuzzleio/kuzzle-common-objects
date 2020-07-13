@@ -1,24 +1,23 @@
 'use strict';
 
-const
-  InternalError = require('../errors/internalError'),
-  assert = require('../utils/assertType');
+import * as InternalError from '../errors/internalError';
+import * as assert from '../utils/assertType';
+import { JSONObject } from '../utils/interfaces';
 
 // private properties
-const
-  __id = '_id\u200b',
-  _index = 'index\u200b',
-  _collection = 'collection\u200b',
-  _jwt = 'jwt\u200b',
-  _volatile = 'volatile\u200b',
-  _body = 'body\u200b',
-  _headers = 'headers\u200b',
-  _controller = 'controller\u200b',
-  _action = 'action\u200b';
+const __id = '_id\u200b';
+const _index = 'index\u200b';
+const _collection = 'collection\u200b';
+const _jwt = 'jwt\u200b';
+const _volatile = 'volatile\u200b';
+const _body = 'body\u200b';
+const _headers = 'headers\u200b';
+const _controller = 'controller\u200b';
+const _action = 'action\u200b';
 
 // any property not listed here will be copied into
 // RequestInput.args
-const handledProperties = new Set([
+const resourceProperties = new Set([
   'jwt',
   'volatile',
   'body',
@@ -38,27 +37,27 @@ class Resource {
     Object.seal(this);
   }
 
-  get _id () {
+  get _id (): string | null {
     return this[__id];
   }
 
-  set _id (str) {
+  set _id (str: string) {
     this[__id] = assert.assertString('_id', str);
   }
 
-  get index () {
+  get index (): string | null {
     return this[_index];
   }
 
-  set index (str) {
+  set index (str: string) {
     this[_index] = assert.assertString('index', str);
   }
 
-  get collection () {
+  get collection (): string | null {
     return this[_collection];
   }
 
-  set collection (str) {
+  set collection (str: string) {
     this[_collection] = assert.assertString('collection', str);
   }
 }
@@ -119,7 +118,10 @@ class Resource {
  * @name RequestInput#resource.collection
  * @type {string}
  */
-class RequestInput {
+export class RequestInput {
+  public args: JSONObject;
+  public resource: Resource;
+
   constructor(data)
   {
     if (!data || typeof data !== 'object' || Array.isArray(data)) {
@@ -137,7 +139,7 @@ class RequestInput {
 
     // copy into this.args only unrecognized properties
     for (const k of Object.keys(data)) {
-      if (!handledProperties.has(k)) {
+      if (!resourceProperties.has(k)) {
         this.args[k] = data[k];
       }
     }
@@ -165,7 +167,7 @@ class RequestInput {
    * Request jwt getter
    * @returns {null|string}
    */
-  get jwt () {
+  get jwt (): string | null {
     return this[_jwt];
   }
 
@@ -173,7 +175,7 @@ class RequestInput {
    * Request jwt setter
    * @param {null|string} str - new jwt
    */
-  set jwt (str) {
+  set jwt (str: string) {
     this[_jwt] = assert.assertString('jwt', str);
   }
 
@@ -181,7 +183,7 @@ class RequestInput {
    * Request controller getter
    * @returns {null|string}
    */
-  get controller () {
+  get controller (): string | null {
     return this[_controller];
   }
 
@@ -189,7 +191,7 @@ class RequestInput {
    * Request controller setter
    * @param {null|string} str - new request controller
    */
-  set controller (str) {
+  set controller (str: string) {
     // can only be set once
     if (!this[_controller]) {
       this[_controller] = assert.assertString('controller', str);
@@ -200,7 +202,7 @@ class RequestInput {
    * Request action getter
    * @returns {null|string}
    */
-  get action () {
+  get action (): string | null {
     return this[_action];
   }
 
@@ -208,7 +210,7 @@ class RequestInput {
    * Request action setter
    * @param {null|string} str - new request action
    */
-  set action (str) {
+  set action (str: string) {
     // can only be set once
     if (!this[_action]) {
       this[_action] = assert.assertString('action', str);
@@ -219,7 +221,7 @@ class RequestInput {
    * Request body getter
    * @returns {null|object}
    */
-  get body () {
+  get body (): JSONObject | null {
     return this[_body];
   }
 
@@ -227,7 +229,7 @@ class RequestInput {
    * Request body setter
    * @param {null|object} obj - new request body
    */
-  set body (obj) {
+  set body (obj: JSONObject) {
     this[_body] = assert.assertObject('body', obj);
   }
 
@@ -235,7 +237,7 @@ class RequestInput {
    * Request headers getter
    * @returns {null|object}
    */
-  get headers () {
+  get headers (): JSONObject | null {
     return this[_headers];
   }
 
@@ -243,7 +245,7 @@ class RequestInput {
    * Request headers setter
    * @param {null|object} obj - new request headers
    */
-  set headers (obj) {
+  set headers (obj: JSONObject) {
     this[_headers] = assert.assertObject('headers', obj);
   }
 
@@ -251,7 +253,7 @@ class RequestInput {
    * Request volatile getter
    * @returns {null|object}
    */
-  get volatile () {
+  get volatile (): JSONObject | null {
     return this[_volatile];
   }
 
@@ -259,12 +261,9 @@ class RequestInput {
    * Request volatile setter
    * @param {null|object} obj - new request volatile
    */
-  set volatile (obj) {
+  set volatile (obj: JSONObject) {
     this[_volatile] = assert.assertObject('volatile', obj);
   }
 }
 
-/**
- * @type {RequestInput}
- */
-module.exports = RequestInput;
+module.exports = { RequestInput };

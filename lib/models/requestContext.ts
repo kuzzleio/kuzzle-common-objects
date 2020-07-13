@@ -1,17 +1,32 @@
 'use strict';
 
-const assert = require('../utils/assertType');
+import * as assert from '../utils/assertType';
+import { JSONObject } from '../utils/interfaces';
 
 // private properties
-const
-  _token = 'token\u200b',
-  _user = 'user\u200b',
-  _connection = 'connection\u200b',
-  // Connection class properties
-  _c_id = 'id\u200b',
-  _c_protocol = 'protocol\u200b',
-  _c_ips = 'ips\u200b',
-  _c_misc = 'misc\u200b';
+const _token = 'token\u200b';
+const _user = 'user\u200b';
+const _connection = 'connection\u200b';
+// Connection class properties
+const _c_id = 'id\u200b';
+const _c_protocol = 'protocol\u200b';
+const _c_ips = 'ips\u200b';
+const _c_misc = 'misc\u200b';
+
+interface IKuzzleToken {
+  _id: string;
+  expiresAt: number;
+  ttl: number;
+  userId: string;
+  connectionId: string | null;
+  jwt: string;
+  refreshed: boolean;
+}
+
+interface IKuzzleUser extends JSONObject {
+  _id: string;
+  profileIds: string[];
+}
 
 /**
  * @class Connection information
@@ -41,46 +56,49 @@ class Connection {
 
     Object.seal(this);
 
-    if (typeof connection === 'object' && connection !== null) {
-      for (const prop of Object.keys(connection)) {
-        if (['id', 'protocol', 'ips'].includes(prop)) {
-          this[prop] = connection[prop];
-        } else {
-          this.misc[prop] = connection[prop];
-        }
+    if (typeof connection !== 'object' || connection === null) {
+      return;
+    }
+
+    for (const prop of Object.keys(connection)) {
+      if (['id', 'protocol', 'ips'].includes(prop)) {
+        this[prop] = connection[prop];
+      }
+      else {
+        this.misc[prop] = connection[prop];
       }
     }
   }
 
-  set id(str) {
+  set id (str: string) {
     this[_c_id] = assert.assertString('connection.id', str);
   }
 
-  get id() {
+  get id (): string | null {
     return this[_c_id];
   }
 
-  set protocol(str) {
+  set protocol (str: string) {
     this[_c_protocol] = assert.assertString('connection.protocol', str);
   }
 
-  get protocol() {
+  get protocol (): string | null {
     return this[_c_protocol];
   }
 
-  set ips(arr) {
+  set ips (arr: string[]) {
     this[_c_ips] = assert.assertArray('connection.ips', arr, 'string');
   }
 
-  get ips() {
+  get ips(): string[] {
     return this[_c_ips];
   }
 
-  get misc() {
+  get misc (): JSONObject {
     return this[_c_misc];
   }
 
-  toJSON() {
+  toJSON (): JSONObject {
     return Object.assign({
       id: this[_c_id],
       protocol: this[_c_protocol],
@@ -115,8 +133,8 @@ class Connection {
  * @name  RequestContext#connection
  * @type {Connection}
  */
-class RequestContext {
-  constructor(options = {}) {
+export class RequestContext {
+  constructor(options: any = {}) {
 
     this[_token] = null;
     this[_user] = null;
@@ -137,7 +155,7 @@ class RequestContext {
     }
   }
 
-  toJSON() {
+  toJSON (): JSONObject {
     return {
       user: this[_user],
       token: this[_token],
@@ -150,7 +168,7 @@ class RequestContext {
    * Context connectionId getter
    * @returns {null|string}
    */
-  get connectionId () {
+  get connectionId (): string | null {
     return this[_connection].id;
   }
 
@@ -159,7 +177,7 @@ class RequestContext {
    * Context connectionId setter
    * @param {null|string} str - new context connectionId
    */
-  set connectionId (str) {
+  set connectionId (str: string) {
     this[_connection].id = assert.assertString('connectionId', str);
   }
 
@@ -168,7 +186,7 @@ class RequestContext {
    * Context protocol getter
    * @returns {null|string}
    */
-  get protocol () {
+  get protocol (): string | null {
     return this[_connection].protocol;
   }
 
@@ -177,7 +195,7 @@ class RequestContext {
    * Context protocol setter
    * @param {null|string} str - new context protocol
    */
-  set protocol (str) {
+  set protocol (str: string) {
     this[_connection].protocol = assert.assertString('protocol', str);
   }
 
@@ -185,7 +203,7 @@ class RequestContext {
    * Context connection informations getter
    * @returns {object}
    */
-  get connection() {
+  get connection (): JSONObject {
     return this[_connection];
   }
 
@@ -193,7 +211,7 @@ class RequestContext {
    * Context token getter
    * @returns {null|object}
    */
-  get token () {
+  get token (): IKuzzleToken | null {
     return this[_token];
   }
 
@@ -201,7 +219,7 @@ class RequestContext {
    * Context token setter
    * @param {null|object} obj - new context token
    */
-  set token (obj) {
+  set token (obj: IKuzzleToken | null) {
     this[_token] = assert.assertObject('token', obj);
   }
 
@@ -209,7 +227,7 @@ class RequestContext {
    * Context user getter
    * @returns {null|object}
    */
-  get user () {
+  get user (): IKuzzleUser | null {
     return this[_user];
   }
 
@@ -217,12 +235,9 @@ class RequestContext {
    * Context user setter
    * @param {null|object} obj - new context user
    */
-  set user (obj) {
+  set user (obj: IKuzzleUser) {
     this[_user] = assert.assertObject('user', obj);
   }
 }
 
-/**
- * @type {RequestContext}
- */
-module.exports = RequestContext;
+module.exports = { RequestContext };
