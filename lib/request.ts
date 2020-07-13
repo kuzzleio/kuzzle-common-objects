@@ -88,7 +88,7 @@ const _response = 'response\u200b';
 export class Request {
   public id: string;
 
-  constructor(data, options) {
+  constructor (data: any, options: any) {
     this[_internalId] = uuid.v4();
     this[_status] = 102;
     this[_input] = new RequestInput(data);
@@ -194,7 +194,7 @@ export class Request {
    * Request context getter
    * @returns {RequestContext}
    */
-  get context () {
+  get context (): RequestContext {
     return this[_context];
   }
 

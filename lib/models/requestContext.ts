@@ -13,6 +13,7 @@ const _c_protocol = 'protocol\u200b';
 const _c_ips = 'ips\u200b';
 const _c_misc = 'misc\u200b';
 
+// Token model class from Kuzzle
 interface IKuzzleToken {
   _id: string;
   expiresAt: number;
@@ -23,9 +24,18 @@ interface IKuzzleToken {
   refreshed: boolean;
 }
 
+// User model class from Kuzzle
 interface IKuzzleUser extends JSONObject {
   _id: string;
   profileIds: string[];
+}
+
+// ClientConnection class from Kuzzle
+interface IKuzzleConnection {
+  id: string;
+  protocol: string;
+  headers: JSONObject;
+  ips: string[];
 }
 
 /**
@@ -203,7 +213,7 @@ export class RequestContext {
    * Context connection informations getter
    * @returns {object}
    */
-  get connection (): JSONObject {
+  get connection (): IKuzzleConnection {
     return this[_connection];
   }
 
