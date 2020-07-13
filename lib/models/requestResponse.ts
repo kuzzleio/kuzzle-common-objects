@@ -10,7 +10,7 @@ const _headers = 'headers\u200b';
 class Headers {
   public headers: JSONObject;
   private namesMap: Map<string, string>;
-  private proxy: any;
+  private proxy: JSONObject;
 
   constructor() {
     this.namesMap = new Map();

@@ -6,26 +6,13 @@
     "target": "es2020",
     "moduleResolution": "node",
     "sourceMap": true,
-    "baseUrl": ".",
-    "skipLibCheck": true,
-    "paths": {
-      "*": [
-        "node_modules/*",
-        "src/types/*"
-      ]
-    },
-    "typeRoots": ["node_modules/@types"]
+    "baseUrl": "."
   },
   "rootDir": "lib/",
   "include": [
-    "lib/models/requestContext.ts",
-    "lib/models/requestInput.ts",
-    "lib/models/requestResponse.ts",
-    "lib/errors/kuzzleError.ts",
-    "lib/request.ts"
+    "lib/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "typings"
+    "node_modules"
   ]
 }

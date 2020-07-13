@@ -10,4 +10,5 @@ requestInput.js
 requestContext.js
 requestResponse.js
 request.js
+interfaces.js
 kuzzleError.js
