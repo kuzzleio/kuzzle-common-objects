@@ -10,6 +10,7 @@
   },
   "rootDir": "lib/",
   "include": [
+    "index.ts",
     "lib/**/*.ts"
   ],
   "exclude": [

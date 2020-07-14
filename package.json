@@ -39,6 +39,8 @@
   },
   "files": [
     "index.js",
-    "lib/**/*"
+    "index.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.d.ts"
   ]
 }
