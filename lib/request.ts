@@ -29,7 +29,7 @@ interface SetResultOptions {
   /**
    * additional response protocol headers
    */
-  headers?: JSONObject;
+  headers?: JSONObject | null;
   /**
    * Returns directly the result instead of wrapping it in a Kuzzle response
    */
