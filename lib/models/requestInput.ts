@@ -37,6 +37,9 @@ class Resource {
     Object.seal(this);
   }
 
+  /**
+   * Document ID
+   */
   get _id (): string | null {
     return this[__id];
   }
@@ -45,6 +48,9 @@ class Resource {
     this[__id] = assert.assertString('_id', str);
   }
 
+  /**
+   * Index name
+   */
   get index (): string | null {
     return this[_index];
   }
@@ -53,6 +59,9 @@ class Resource {
     this[_index] = assert.assertString('index', str);
   }
 
+  /**
+   * Collection name
+   */
   get collection (): string | null {
     return this[_collection];
   }
@@ -63,67 +72,64 @@ class Resource {
 }
 
 /**
- * Builds a Kuzzle normalized request input object
+ * API request arguments are accessible here.
  *
- * The 'data' object accepts a request content using the same
- * format as the one used, for instance, for the Websocket protocol
+ * Common arguments are accessible at the root level:
+ * "jwt", "volatile", "body", "controller", "action"
  *
- * Any undefined option is set to null
+ * Resource arguments are accessible under the "resource" property:
+ * "_id", "index", "collection"
  *
- * @class
- * @param {object} data
- */
-
-/**
- * @name RequestInput#args
- * @type {object}
- */
-/**
- * @name RequestInput#volatile
- * @type {object}
- */
-/**
- * @name RequestInput#body
- * @type {object}
- */
-/**
- * @name RequestInput#headers
- * @type {object}
- */
-/**
- * @name RequestInput#controller
- * @type {string}
- */
-/**
- * @name RequestInput#action
- * @type {string}
- */
-/**
- * @name RequestInput#jwt
- * @type {string}
- */
-/**
- * @name RequestInput#resource
- * @type {object}
- */
-/**
- * @name RequestInput#resource._id
- * @type {string}
- */
-/**
- * @name RequestInput#resource.index
- * @type {string}
- */
-/**
- * @name RequestInput#resource.collection
- * @type {string}
+ * Every other arguments are accessible under the "args" property. E.g:
+ * "refresh", "onExistingUser", "foobar", etc.
  */
 export class RequestInput {
+  /**
+   * Others arguments (e.g: "refresh").
+   * @example
+   * {
+   *   controller
+   *   action,
+   *   _id,
+   *   index,
+   *   collection,
+   *   jwt,
+   *   refresh,     <== that
+   *   foobar,      <== that
+   *   volatile,
+   *   body
+   *  }
+   */
   public args: JSONObject;
+
+  /**
+   * Common arguments that identify Kuzzle resources.
+   * (e.g: "_id", "index", "collection")
+   * @example
+   * {
+   *   controller
+   *   action,
+   *   _id,         <== that
+   *   index,       <== that
+   *   collection,  <== that
+   *   jwt,
+   *   refresh,
+   *   foobar,
+   *   volatile,
+   *   body
+   *  }
+   */
   public resource: Resource;
 
-  constructor(data)
-  {
+  /**
+   * Builds a Kuzzle normalized request input object
+   *
+   * The 'data' object accepts a request content using the same
+   * format as the one used, for instance, for the Websocket protocol
+   *
+   * Any undefined option is set to null
+   */
+  constructor(data) {
     if (!data || typeof data !== 'object' || Array.isArray(data)) {
       throw new InternalError('Input request data must be a non-null object');
     }
@@ -164,33 +170,49 @@ export class RequestInput {
   }
 
   /**
-   * Request jwt getter
-   * @returns {null|string}
+   * Authentication token.
+   * @example
+   * {
+   *   controller
+   *   action,
+   *   _id,
+   *   index,
+   *   collection,
+   *   jwt,        <== that
+   *   refresh,
+   *   foobar,
+   *   volatile,
+   *   body
+   *  }
    */
   get jwt (): string | null {
     return this[_jwt];
   }
 
-  /**
-   * Request jwt setter
-   * @param {null|string} str - new jwt
-   */
   set jwt (str: string) {
     this[_jwt] = assert.assertString('jwt', str);
   }
 
   /**
-   * Request controller getter
-   * @returns {null|string}
+   * API controller name.
+   * @example
+   * {
+   *   controller  <== that
+   *   action,
+   *   _id,
+   *   index,
+   *   collection,
+   *   jwt,
+   *   refresh,
+   *   foobar,
+   *   volatile,
+   *   body
+   *  }
    */
   get controller (): string | null {
     return this[_controller];
   }
 
-  /**
-   * Request controller setter
-   * @param {null|string} str - new request controller
-   */
   set controller (str: string) {
     // can only be set once
     if (!this[_controller]) {
@@ -199,17 +221,25 @@ export class RequestInput {
   }
 
   /**
-   * Request action getter
-   * @returns {null|string}
+   * API action name.
+   * @example
+   * {
+   *   controller
+   *   action,      <== that
+   *   _id,
+   *   index,
+   *   collection,
+   *   jwt,
+   *   refresh,
+   *   foobar,
+   *   volatile,
+   *   body
+   *  }
    */
   get action (): string | null {
     return this[_action];
   }
 
-  /**
-   * Request action setter
-   * @param {null|string} str - new request action
-   */
   set action (str: string) {
     // can only be set once
     if (!this[_action]) {
@@ -218,49 +248,61 @@ export class RequestInput {
   }
 
   /**
-   * Request body getter
-   * @returns {null|object}
+   * Request body.
+   * In Http it's the request body parsed.
+   * @example
+   * {
+   *   controller
+   *   action,
+   *   _id,
+   *   index,
+   *   collection,
+   *   jwt,
+   *   refresh,
+   *   foobar,
+   *   volatile,
+   *   body         <== that
+   *  }
    */
   get body (): JSONObject | null {
     return this[_body];
   }
 
-  /**
-   * Request body setter
-   * @param {null|object} obj - new request body
-   */
   set body (obj: JSONObject) {
     this[_body] = assert.assertObject('body', obj);
   }
 
   /**
-   * Request headers getter
-   * @returns {null|object}
+   * Request headers (Http only).
    */
   get headers (): JSONObject | null {
     return this[_headers];
   }
 
-  /**
-   * Request headers setter
-   * @param {null|object} obj - new request headers
-   */
   set headers (obj: JSONObject) {
     this[_headers] = assert.assertObject('headers', obj);
   }
 
   /**
-   * Request volatile getter
-   * @returns {null|object}
+   * Volatile object.
+   * @example
+   * {
+   *   controller
+   *   action,
+   *   _id,
+   *   index,
+   *   collection,
+   *   jwt,
+   *   refresh,
+   *   foobar,
+   *   volatile,    <== that
+   *   body
+   *  }
    */
   get volatile (): JSONObject | null {
     return this[_volatile];
   }
 
-  /**
-   * Request volatile setter
-   * @param {null|object} obj - new request volatile
-   */
   set volatile (obj: JSONObject) {
     this[_volatile] = assert.assertObject('volatile', obj);
   }

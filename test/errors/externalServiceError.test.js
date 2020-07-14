@@ -1,8 +1,7 @@
 'use strict';
 
-const
-  should = require('should'),
-  ExternalServiceError = require('../../lib/errors/externalServiceError');
+const should = require('should');
+const ExternalServiceError = require('../../lib/errors/externalServiceError');
 
 describe('#ExternalServiceError', () => {
   it('should create a well-formed object', () => {

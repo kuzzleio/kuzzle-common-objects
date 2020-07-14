@@ -2,7 +2,7 @@
 
 import * as assert from '../utils/assertType';
 import { JSONObject } from '../utils/interfaces';
-import KuzzleError from '../errors/kuzzleError';
+import { KuzzleError } from '../errors/kuzzleError';
 
 const _request = 'request\u200b';
 const _headers = 'headers\u200b';
@@ -115,15 +115,11 @@ class Headers {
 }
 
 /**
- * Kuzzle normalized response
- *
- * @class
- * @param {Request} request
- *
+ * Kuzzle normalized API response
  */
 export class RequestResponse {
   /**
-   * If sets to true, returns only the provided "result" in response "content"
+   * If sets to true, "result" content will not be wrapped in a Kuzzle response
    */
   public raw: boolean;
 
@@ -136,139 +132,111 @@ export class RequestResponse {
   }
 
   /**
-   * Get the parent request status
-   * @returns {number}
+   * Request HTTP status
    */
   get status (): number {
     return this[_request].status;
   }
 
-  /**
-   * Set the parent request status
-   * @param {number} s
-   */
   set status (s: number) {
     this[_request].status = s;
   }
 
   /**
-   * Get the parent request error
-   * @returns {KuzzleError}
+   * Request error
    */
-  get error (): KuzzleError {
+  get error (): KuzzleError | null {
     return this[_request].error;
   }
 
-  /**
-   * Set the parent request error
-   * @param {KuzzleError} e
-   */
-  set error (e: KuzzleError) {
+  set error (e: KuzzleError | null) {
     this[_request].setError(e);
   }
 
   /**
-   * Get the parent request id
-   * @returns {string|*|String}
+   * Request external ID
    */
   get requestId (): string | null {
     return this[_request].id;
   }
 
   /**
-   * Get the parent request controller
-   * @returns {string}
+   * API controller name
    */
   get controller (): string | null {
     return this[_request].input.controller;
   }
 
   /**
-   * Get the parent request action
-   * @returns {string}
+   * API action name
    */
   get action (): string | null {
     return this[_request].input.action;
   }
 
   /**
-   * Get the parent request collection
-   * @returns {string}
+   * Collection name
    */
   get collection (): string | null {
     return this[_request].input.resource.collection;
   }
 
   /**
-   * Get the parent request index
-   * @returns {string}
+   * Index name
    */
   get index (): string | null {
     return this[_request].input.resource.index;
   }
 
   /**
-   * Get the parent request volatile data
-   * @returns {Object}
+   * Volatile object
    */
   get volatile (): JSONObject | null {
     return this[_request].input.volatile;
   }
 
   /**
-   * Get the response headers - reference to private parent request property
-   * @returns {*}
+   * Response headers
    */
   get headers (): JSONObject {
     return this[_headers].proxy;
   }
 
   /**
-   * Get the parent request result
-   * @returns {*|null|*|Object}
+   * Request result
    */
   get result (): any {
     return this[_request].result;
   }
 
-  /**
-   * Set the parent request result
-   * @param {*} r
-   */
   set result (r: any) {
     this[_request].setResult(r);
   }
 
   /**
-   * Get the header value for {name} (case-insensitive)
-   * @public
-   * @param {string} name
+   * Gets a header value (case-insensitive)
    */
   getHeader (name: string): string | null {
     return this[_headers].getHeader(name);
   }
 
   /**
-   * Delete the header matching {name} (case-insensitive=
-   * @param {string} name
+   * Deletes a header (case-insensitive)
    */
   removeHeader (name: string) {
     return this[_headers].removeHeader(name);
   }
 
   /**
-   * Set a new array. Behaves the same as Node.js' HTTP response.setHeader
+   * Sets a new array. Behaves the same as Node.js' HTTP response.setHeader
    * method (@see https://nodejs.org/api/http.html#http_response_setheader_name_value)
-   * @param {string} name
-   * @param {*} value
    */
   setHeader (name: string, value: string) {
     return this[_headers].setHeader(name, value);
   }
 
   /**
-   * Add new multiple headers.
-   * @param {object} headers
+   * Adds new multiple headers.
    */
   setHeaders (headers: JSONObject) {
     assert.assertObject('headers', headers);
@@ -279,8 +247,7 @@ export class RequestResponse {
   }
 
   /**
-   * Serialize the response. Exposes the prototype getters values
-   * @returns {object}
+   * Serializes the response.
    */
   toJSON (): JSONObject {
     if (this.raw === true) {

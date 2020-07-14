@@ -118,7 +118,7 @@ describe('#Request', () => {
   });
 
   it('should throw if attempting to set a non-error object as a request error', () => {
-    should(function () { rq.setError('foo'); }).throw(/^cannot set non-error object.*$/);
+    should(function () { rq.setError('foo'); }).throw(/^Cannot set non-error object.*$/);
   });
 
   it('should set the provided result with default status 200', () => {

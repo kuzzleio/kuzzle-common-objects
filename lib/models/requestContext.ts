@@ -15,50 +15,96 @@ const _c_misc = 'misc\u200b';
 
 // Token model class from Kuzzle
 interface IKuzzleToken {
+  /**
+   * Unique ID
+   */
   _id: string;
+  /**
+   * Expiration date in micro-time
+   */
   expiresAt: number;
+  /**
+   * Time-to-live
+   */
   ttl: number;
+  /**
+   * Associated user ID
+   */
   userId: string;
+  /**
+   * Associated connection ID
+   */
   connectionId: string | null;
+  /**
+   * JWT token
+   */
   jwt: string;
+  /**
+   * True if the token has been refreshed with the current request
+   */
   refreshed: boolean;
 }
 
 // User model class from Kuzzle
 interface IKuzzleUser extends JSONObject {
+  /**
+   * Unique ID
+   */
   _id: string;
+  /**
+   * User profiles
+   */
   profileIds: string[];
 }
 
 // ClientConnection class from Kuzzle
-interface IKuzzleConnection {
+interface IKuzzleConnection extends JSONObject {
+  /**
+   * Internal ID
+   */
   id: string;
+  /**
+   * Protocol name
+   */
   protocol: string;
+  /**
+   * Optional headers
+   */
   headers: JSONObject;
+  /**
+   * Associated IP adresses
+   */
   ips: string[];
 }
 
+interface IRequestContextOptions {
+  /**
+   * Connection object
+   */
+  connection?: IKuzzleConnection;
+  /**
+   * Authenticated user object
+   */
+  user?: IKuzzleUser;
+  /**
+   * Kuzzle authentication token object
+   */
+  token?: IKuzzleToken;
+  /**
+   * Protocol at the origin of the connection
+   */
+  protocol?: string;
+  /**
+   * @deprecated
+   */
+  connectionId?: string;
+}
+
 /**
- * @class Connection information
- */
-/**
- * @name id
- * @type {string}
- */
-/**
- * @name protocol
- * @type {string}
- */
-/**
- * @name ips
- * @type {Array}
- */
-/**
- * @name misc
- * @type {object}
+ * Information about the connection at the origin of the request.
  */
 class Connection {
-  constructor(connection) {
+  constructor (connection: IKuzzleConnection) {
     this[_c_id] = null;
     this[_c_protocol] = null;
     this[_c_ips] = [];
@@ -84,6 +130,9 @@ class Connection {
     this[_c_id] = assert.assertString('connection.id', str);
   }
 
+  /**
+   * Internal connection ID
+   */
   get id (): string | null {
     return this[_c_id];
   }
@@ -92,6 +141,9 @@ class Connection {
     this[_c_protocol] = assert.assertString('connection.protocol', str);
   }
 
+  /**
+   * Protocol name
+   */
   get protocol (): string | null {
     return this[_c_protocol];
   }
@@ -100,14 +152,23 @@ class Connection {
     this[_c_ips] = assert.assertArray('connection.ips', arr, 'string');
   }
 
+  /**
+   * Array of IP addresses associated to the request
+   */
   get ips(): string[] {
     return this[_c_ips];
   }
 
+  /**
+   * Other custom informations
+   */
   get misc (): JSONObject {
     return this[_c_misc];
   }
 
+  /**
+   * Serializes the Connection object
+   */
   toJSON (): JSONObject {
     return Object.assign({
       id: this[_c_id],
@@ -118,33 +179,13 @@ class Connection {
 }
 
 /**
- * @class
- * @param {object} [options]
- */
-/**
- * @deprecated use connection.id instead
- * @name RequestContext#connectionId
- * @type {string}
- */
-/**
- * @deprecated use connection.protocol instead
- * @name RequestContext#protocol
- * @type {string}
- */
-/**
- * @name RequestContext#token
- * @type {object}
- */
-/**
- * @name RequestContext#user
- * @type {object}
- */
-/**
- * @name  RequestContext#connection
- * @type {Connection}
+ * Kuzzle execution context for the request.
+ *
+ * Contains informations about identity (token, user)
+ * and origin (connection, protocol).
  */
 export class RequestContext {
-  constructor(options: any = {}) {
+  constructor(options: IRequestContextOptions = {}) {
 
     this[_token] = null;
     this[_user] = null;
@@ -165,6 +206,9 @@ export class RequestContext {
     }
   }
 
+  /**
+   * Serializes the RequestContext object
+   */
   toJSON (): JSONObject {
     return {
       user: this[_user],
@@ -175,76 +219,52 @@ export class RequestContext {
 
   /**
    * @deprecated use connection.id instead
-   * Context connectionId getter
-   * @returns {null|string}
+   * Internal connection ID
    */
   get connectionId (): string | null {
     return this[_connection].id;
   }
 
-  /**
-   * @deprecated use connection.id instead
-   * Context connectionId setter
-   * @param {null|string} str - new context connectionId
-   */
   set connectionId (str: string) {
     this[_connection].id = assert.assertString('connectionId', str);
   }
 
   /**
    * @deprecated use connection.protocol instead
-   * Context protocol getter
-   * @returns {null|string}
    */
   get protocol (): string | null {
     return this[_connection].protocol;
   }
 
-  /**
-   * @deprecated use connection.protocol instead
-   * Context protocol setter
-   * @param {null|string} str - new context protocol
-   */
   set protocol (str: string) {
     this[_connection].protocol = assert.assertString('protocol', str);
   }
 
   /**
-   * Context connection informations getter
-   * @returns {object}
+   * Connection that initiated the request
    */
   get connection (): IKuzzleConnection {
     return this[_connection];
   }
 
   /**
-   * Context token getter
-   * @returns {null|object}
+   * Authentication token
    */
   get token (): IKuzzleToken | null {
     return this[_token];
   }
 
-  /**
-   * Context token setter
-   * @param {null|object} obj - new context token
-   */
   set token (obj: IKuzzleToken | null) {
     this[_token] = assert.assertObject('token', obj);
   }
 
   /**
-   * Context user getter
-   * @returns {null|object}
+   * Associated user
    */
   get user (): IKuzzleUser | null {
     return this[_user];
   }
 
-  /**
-   * Context user setter
-   * @param {null|object} obj - new context user
-   */
   set user (obj: IKuzzleUser) {
     this[_user] = assert.assertObject('user', obj);
   }

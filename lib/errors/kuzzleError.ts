@@ -5,7 +5,7 @@ import { JSONObject } from '../utils/interfaces';
  * API error are instances of this class.
  * See https://docs.kuzzle.io/core/2/api/essentials/error-handling/
  */
-export default class KuzzleError extends Error {
+export class KuzzleError extends Error {
   /**
    * HTTP status code
    */
@@ -13,7 +13,7 @@ export default class KuzzleError extends Error {
 
   /**
    * Error unique code
-   * See https://docs.kuzzle.io/core/2/core/2/api/essentials/error-codes/
+   * @see https://docs.kuzzle.io/core/2/core/2/api/essentials/error-codes/
    */
   public code: number;
 
@@ -22,7 +22,7 @@ export default class KuzzleError extends Error {
    */
   public id: string;
 
-  constructor(message: string, status: number, id: string, code: number) {
+  constructor(message: string, status: number, id?: string, code?: number) {
     super(message);
 
     this.status = status;
@@ -39,6 +39,9 @@ export default class KuzzleError extends Error {
     }
   }
 
+  /**
+   * Error class name (e.g: 'NotFoundError')
+   */
   get name (): string {
     return 'KuzzleError';
   }
@@ -54,4 +57,4 @@ export default class KuzzleError extends Error {
   }
 }
 
-module.exports = KuzzleError;
+module.exports = { KuzzleError };

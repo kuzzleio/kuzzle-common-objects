@@ -5,7 +5,8 @@ import * as uuid from 'uuid';
 import { RequestInput } from './models/requestInput';
 import { RequestResponse } from './models/requestResponse';
 import { RequestContext } from './models/requestContext';
-import { KuzzleError, InternalError } from './errors';
+import { KuzzleError } from './errors/kuzzleError';
+import { InternalError } from './errors/';
 import { JSONObject } from './utils/interfaces';
 import * as assert from './utils/assertType';
 
@@ -19,6 +20,21 @@ const _result = 'result\u200b';
 const _context = 'context\u200b';
 const _timestamp = 'timestamp\u200b';
 const _response = 'response\u200b';
+
+interface SetResultOptions {
+  /**
+   * HTTP status code
+   */
+  status?: number
+  /**
+   * additional response protocol headers
+   */
+  headers?: JSONObject;
+  /**
+   * Returns directly the result instead of wrapping it in a Kuzzle response
+   */
+  raw?: boolean;
+}
 
 /**
  * Builds a Kuzzle normalized request object
@@ -44,48 +60,11 @@ const _response = 'response\u200b';
  * the internalId is used to identify a request by Kuzzle, and
  * the requestId should only be used by clients or plugins.
  *
- * @class
- * @param {Object} data - raw request content
- * @param {Object} [options]
- */
-
-/**
- * @name  Request#internalId
- * @type {string}
- */
-/**
- * @name Request#timestamp
- * @type {number}
- */
-/**
- * @name Request#id
- * @type {string}
- */
-/**
- * @name Request#input
- * @type {RequestInput}
- */
-/**
- * @name Request#status
- * @type {number}
- */
-/**
- * @name Request#error
- * @type {KuzzleError}
- */
-/**
- * @name Request#response
- * @type {RequestResponse}
- */
-/**
- * @name Request#result
- * @type {*}
- */
-/**
- * @name Request#context
- * @type {RequestContext}
  */
 export class Request {
+  /**
+   * Request external ID (specified by "requestId" or random uuid)
+   */
   public id: string;
 
   constructor (data: any, options: any) {
@@ -151,90 +130,75 @@ export class Request {
   }
 
   /**
-   * Request internal identifier getter
-   * @return {string}
+   * Request internal ID
    */
   get internalId (): string {
     return this[_internalId];
   }
 
   /**
-   * Request timestamp getter
-   * @returns {number}
+   * Request timestamp (in micro-time)
    */
   get timestamp (): number {
     return this[_timestamp];
   }
 
   /**
-   * Request status getter
-   * @returns {number}
+   * Request HTTP status
    */
   get status (): number {
     return this[_status];
   }
 
-  /**
-   * Request status setter
-   * @param {number} i - new request status
-   */
   set status (i: number) {
     this[_status] = assert.assertInteger('status', i);
   }
 
   /**
-   * Request input getter
-   * @returns {RequestInput}
+   * Request input
    */
   get input (): RequestInput {
     return this[_input];
   }
 
   /**
-   * Request context getter
-   * @returns {RequestContext}
+   * Request context
    */
   get context (): RequestContext {
     return this[_context];
   }
 
   /**
-   * Request error getter
-   * @returns {null|KuzzleError}
+   * Request error
    */
   get error (): KuzzleError | null {
     return this[_error];
   }
 
   /**
-   * Request result getter
-   * @returns {null|*}
+   * Request result
    */
   get result (): any | null {
     return this[_result];
   }
 
   /**
-   * Request response getter
-   * @returns {{status: (number|*), error: (null|*), requestId: string, controller: string, action: string, collection: string, index: string, volatile: Object, headers: (Array|*), result: (null|*|Object)}}
+   * Request response
    */
   get response (): RequestResponse {
     if (this[_response] === null) {
       this[_response] = new RequestResponse(this);
     }
+
     return this[_response];
   }
 
   /**
    * Sets the request status to the error one, and fills the error member
-   *
-   * @name setError
-   * @param {Object} error
-   * @memberOf Request
    */
   setError (error: KuzzleError) {
     if (!error || !(error instanceof Error)) {
-      throw new InternalError('cannot set non-error object as a request\'s error');
+      throw new InternalError('Cannot set non-error object as a request\'s error');
     }
 
     this[_error] = error instanceof KuzzleError ? error : new InternalError(error);
@@ -243,9 +207,6 @@ export class Request {
 
   /**
    * Sets the request error to null and status to 200
-   *
-   * @name clearError
-   * @memberOf Request
    */
   clearError () {
     this[_error] = null;
@@ -258,16 +219,10 @@ export class Request {
    * Optional parameters can be provided with the "options" argument.
    * This optional object may contain the following properties:
    *   - status (number): HTTP status code (default: 200)
-   *   - headers (object): additional response protocol headers (default: null)
+   *   - headers (JSONObject): additional response protocol headers (default: null)
    *   - raw (boolean): instead of a Kuzzle response, forward the result directly (default: false)
-   *
-   * @param {Object} result - result content
-   * @param {Object} [options] - response options
-   * @memberOf Request
    */
-  setResult(result: any, options: any) {
-    options = options || {};
-
+  setResult(result: any, options: SetResultOptions = {}) {
     if (result instanceof Error) {
       throw new InternalError('cannot set an error as a request\'s response');
     }
@@ -289,9 +244,6 @@ export class Request {
    * Serialize this object into a pair of POJOs that can be send
    * across the network and then used to instantiate a new Request
    * object
-   *
-   * @return {object}
-   * @memberOf Request
    */
   serialize (): JSONObject {
     const serialized = {
