@@ -27,7 +27,7 @@
     "test": "npm run --silent test:lint && npm run test:unit",
     "test:unit": "nyc --reporter=text-summary --reporter=lcov mocha",
     "test:lint": "npm run test:lint:js && npm run test:lint:ts",
-    "test:lint:js": "eslint --max-warnings=0 index.js ./lib ./test",
+    "test:lint:js": "eslint --max-warnings=0 ./lib ./test",
     "test:lint:ts": "eslint ./lib --ext .ts --config .eslintc-ts.json",
     "codecov": "codecov"
   },
