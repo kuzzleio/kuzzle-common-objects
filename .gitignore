@@ -12,3 +12,4 @@ requestResponse.js
 request.js
 interfaces.js
 kuzzleError.js
+index.js
