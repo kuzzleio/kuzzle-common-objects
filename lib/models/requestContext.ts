@@ -54,7 +54,7 @@ interface IKuzzleUser extends JSONObject {
   /**
    * User profiles
    */
-  profileIds: string[];
+  profileIds: Array<string>;
 }
 
 // ClientConnection class from Kuzzle
@@ -74,7 +74,7 @@ interface IKuzzleConnection extends JSONObject {
   /**
    * Associated IP adresses
    */
-  ips: string[];
+  ips: Array<string>;
 }
 
 interface IRequestContextOptions {
@@ -148,14 +148,14 @@ class Connection {
     return this[_c_protocol];
   }
 
-  set ips (arr: string[]) {
+  set ips (arr: Array<string>) {
     this[_c_ips] = assert.assertArray('connection.ips', arr, 'string');
   }
 
   /**
    * Array of IP addresses associated to the request
    */
-  get ips(): string[] {
+  get ips(): Array<string> {
     return this[_c_ips];
   }
 
