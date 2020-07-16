@@ -43,7 +43,7 @@ export class KuzzleError extends Error {
    * Error class name (e.g: 'NotFoundError')
    */
   get name (): string {
-    return 'KuzzleError';
+    return this.constructor.name;
   }
 
   toJSON (): JSONObject {
