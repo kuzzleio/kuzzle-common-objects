@@ -32,6 +32,7 @@ describe('#RequestResponse', () => {
       should(response.volatile).be.exactly(req.input.volatile);
       should(response.headers).be.an.Object().and.be.empty();
       should(response.result).be.exactly(req.result);
+      should(response.deprecations).be.undefined();
     });
 
     it('should throw if we try to extend the response', () => {
@@ -278,7 +279,8 @@ describe('#RequestResponse', () => {
         'collection',
         'index',
         'volatile',
-        'result'
+        'result',
+        'deprecations'
       ]);
       should(response.toJSON().raw).be.false();
       should(response.toJSON().headers).match({'x-foo': 'bar'});
