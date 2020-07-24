@@ -208,6 +208,10 @@ Result:
 
 Adds a deprecation on the request object allowing to notify when a controller or an action is deprecated for a specific version of Kuzzle
 
+::: info
+Deprecation messages in request responses will only be added during development stages, i.e. if the `NODE_ENV` environment variable is set to `development`.
+:::
+
 **Arguments**
 
 | Name | Type | Description                      |
