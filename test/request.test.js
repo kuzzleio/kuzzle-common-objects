@@ -294,11 +294,19 @@ describe('#Request', () => {
     should(request.status).eql(200);
   });
 
-  it('should add a deprecation correctly', () => {
+  it('should add a deprecation when kuzzle is in development', () => {
+    process.env.NODE_ENV = 'development';
     rq.addDeprecation('1.0.0', 'You should now use Kuzzle v2');
 
     should(rq.deprecations).be.Array();
     should(rq.deprecations).be.lengthOf(1);
     should(rq.deprecations[0]).deepEqual({ version: '1.0.0', message: 'You should now use Kuzzle v2' });
+  });
+
+  it('should not add a deprecation when kuzzle is in production', () => {
+    process.env.NODE_ENV = 'production';
+    rq.addDeprecation('1.0.0', 'You should now use Kuzzle v2');
+
+    should(rq.deprecations).be.undefined();
   });
 });
