@@ -22,9 +22,14 @@ class Headers {
     });
   }
 
-  getHeader (name: string): string | void {
+  /**
+   * Gets a header value
+   *
+   * @param name Header name. Could be a string (case-insensitive) or a symbol
+   */
+  getHeader (name: any): string | void {
     if (typeof name === 'symbol') {
-      return this.headers[name];
+      return this.headers[name as unknown as string];
     }
 
     assert.assertString('header name', name);
