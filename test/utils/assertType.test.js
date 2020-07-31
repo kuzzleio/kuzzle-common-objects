@@ -1,7 +1,7 @@
 const
   should = require('should'),
   assert = require('../../lib/utils/assertType'),
-  BadRequestError = require('../../lib/errors/badRequestError');
+  {BadRequestError} = require('../../lib/errors/badRequestError');
 
 describe('#assertType', () => {
   describe('#assertArray', () => {
@@ -31,6 +31,7 @@ describe('#assertType', () => {
     });
 
     it('should throw if the provided array contains a value of an unexpected type', () => {
+      console.log({BadRequestError})
       for (const wrong of [{}, [], 123, true, false]) {
         const arr = ['foo', wrong, 'bar'];
         should(() => assert.assertArray('foo', arr, 'string'))
