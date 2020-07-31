@@ -7,7 +7,7 @@ import { RequestResponse } from './models/requestResponse';
 import { RequestContext } from './models/requestContext';
 import { KuzzleError } from './errors/kuzzleError';
 import { InternalError } from './errors/';
-import { JSONObject } from './utils/interfaces';
+import { JSONObject, Deprecation } from './utils/interfaces';
 import * as assert from './utils/assertType';
 
 // private properties
@@ -20,21 +20,7 @@ const _result = 'result\u200b';
 const _context = 'context\u200b';
 const _timestamp = 'timestamp\u200b';
 const _response = 'response\u200b';
-
-interface SetResultOptions {
-  /**
-   * HTTP status code
-   */
-  status?: number
-  /**
-   * additional response protocol headers
-   */
-  headers?: JSONObject | null;
-  /**
-   * Returns directly the result instead of wrapping it in a Kuzzle response
-   */
-  raw?: boolean;
-}
+const _deprecations = 'deprecations\u200b';
 
 /**
  * Builds a Kuzzle normalized request object
@@ -75,6 +61,7 @@ export class Request {
     this[_error] = null;
     this[_result] = null;
     this[_response] = null;
+    this[_deprecations] = undefined;
 
     // @deprecated - Backward compatibility with the RequestInput.headers
     // property
@@ -137,7 +124,19 @@ export class Request {
   }
 
   /**
-   * Request timestamp (in micro-time)
+   * Request internal identifier getter
+   */
+  get deprecations (): Array<Deprecation> | void {
+    return this[_deprecations];
+  }
+
+  set deprecations (deprecations: Array<Deprecation> | void) {
+    this[_deprecations] = assert.assertArray('deprecations', deprecations, 'object');
+  }
+
+
+  /**
+   * Request timestamp (in Epoch-micro)
    */
   get timestamp (): number {
     return this[_timestamp];
@@ -214,15 +213,31 @@ export class Request {
   }
 
   /**
-   * Sets the result and request status
+   * Sets the request result and status
    *
-   * Optional parameters can be provided with the "options" argument.
-   * This optional object may contain the following properties:
-   *   - status (number): HTTP status code (default: 200)
-   *   - headers (JSONObject): additional response protocol headers (default: null)
-   *   - raw (boolean): instead of a Kuzzle response, forward the result directly (default: false)
+   * @param result Request result. Will be converted to JSON unless `raw` option is set to `true`
+   * @param options Additional options
+   *    - `status` (number): HTTP status code (default: 200)
+   *    - `headers` (JSONObject): additional response protocol headers (default: null)
+   *    - `raw` (boolean): instead of a Kuzzle response, forward the result directly (default: false)
    */
-  setResult(result: any, options: SetResultOptions = {}) {
+  setResult (
+    result: any,
+    options: {
+      /**
+       * HTTP status code
+       */
+      status?: number
+      /**
+       * additional response protocol headers
+       */
+      headers?: JSONObject | null;
+      /**
+       * Returns directly the result instead of wrapping it in a Kuzzle response
+       */
+      raw?: boolean;
+    } = {}
+  ) {
     if (result instanceof Error) {
       throw new InternalError('cannot set an error as a request\'s response');
     }
@@ -238,6 +253,30 @@ export class Request {
     }
 
     this[_result] = result;
+  }
+
+  /**
+   * Add a deprecation for a used component, this can be action/controller/parameters...
+   *
+   * @param version version where the used component has been deprecated
+   * @param message message displayed in the warning
+   */
+  addDeprecation (version: string, message: string) {
+    if (process.env.NODE_ENV !== 'development') {
+      return;
+    }
+
+    const deprecation = {
+      version,
+      message
+    };
+
+    if (!this.deprecations) {
+      this.deprecations = [deprecation];
+    }
+    else {
+      this.deprecations.push(deprecation);
+    }
   }
 
   /**

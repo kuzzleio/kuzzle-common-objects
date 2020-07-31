@@ -24,11 +24,12 @@ describe('#Request', () => {
     should(rq.input).be.instanceOf(RequestInput);
     should(rq.result).be.null();
     should(rq.error).be.null();
+    should(rq.deprecations).be.undefined();
   });
 
   it('should initialize the request object with the provided options', () => {
     let
-      result = {foo: 'bar'},
+      result = { foo: 'bar' },
       error = new InternalError('foobar'),
       options = {
         status: 666,
@@ -36,7 +37,7 @@ describe('#Request', () => {
         error,
         connectionId: 'connectionId',
         protocol: 'protocol',
-        token: {token: 'token'},
+        token: { token: 'token' },
         user: { user: 'user' }
       },
       request = new Request({}, options);
@@ -50,13 +51,13 @@ describe('#Request', () => {
     should(request.error.status).be.exactly(request.error.status);
     should(request.context.protocol).eql('protocol');
     should(request.context.connectionId).eql('connectionId');
-    should(request.context.token).match({token: 'token'});
-    should(request.context.user).match({user: 'user'});
+    should(request.context.token).match({ token: 'token' });
+    should(request.context.user).match({ user: 'user' });
   });
 
   it('should instanciate a new KuzzleError object from a serialized error', () => {
     let
-      result = {foo: 'bar'},
+      result = { foo: 'bar' },
       error = new InternalError('foobar'),
       options = {
         status: 666,
@@ -64,7 +65,7 @@ describe('#Request', () => {
         error: error.toJSON(),
         connectionId: 'connectionId',
         protocol: 'protocol',
-        token: {token: 'token'},
+        token: { token: 'token' },
         user: { user: 'user' }
       },
       request = new Request({}, options);
@@ -77,8 +78,8 @@ describe('#Request', () => {
     should(request.error.status).be.exactly(request.error.status);
     should(request.context.protocol).eql('protocol');
     should(request.context.connectionId).eql('connectionId');
-    should(request.context.token).match({token: 'token'});
-    should(request.context.user).match({user: 'user'});
+    should(request.context.token).match({ token: 'token' });
+    should(request.context.user).match({ user: 'user' });
   });
 
   it('should throw if a non-object options argument is provided', () => {
@@ -88,10 +89,10 @@ describe('#Request', () => {
   });
 
   it('should throw if an invalid optional status is provided', () => {
-    should(function () { new Request({}, {status: []}); }).throw('Attribute status must be an integer');
-    should(function () { new Request({}, {status: {}}); }).throw('Attribute status must be an integer');
-    should(function () { new Request({}, {status: 'foobar'}); }).throw('Attribute status must be an integer');
-    should(function () { new Request({}, {status: 123.45}); }).throw('Attribute status must be an integer');
+    should(function () { new Request({}, { status: [] }); }).throw('Attribute status must be an integer');
+    should(function () { new Request({}, { status: {} }); }).throw('Attribute status must be an integer');
+    should(function () { new Request({}, { status: 'foobar' }); }).throw('Attribute status must be an integer');
+    should(function () { new Request({}, { status: 123.45 }); }).throw('Attribute status must be an integer');
   });
 
   it('should set an error properly', () => {
@@ -102,7 +103,7 @@ describe('#Request', () => {
     should(rq.error).be.exactly(foo);
     should(rq.status).eql(666);
 
-    should(rq.error.toJSON()).match({status: foo.status, message: foo.message});
+    should(rq.error.toJSON()).match({ status: foo.status, message: foo.message });
   });
 
   it('should wrap a plain Error object into an InternalError one', () => {
@@ -122,7 +123,7 @@ describe('#Request', () => {
   });
 
   it('should set the provided result with default status 200', () => {
-    let result = {foo: 'bar'};
+    let result = { foo: 'bar' };
     rq.setResult(result);
 
     should(rq.result).be.exactly(result);
@@ -130,8 +131,8 @@ describe('#Request', () => {
   });
 
   it('should set a custom status code if one is provided', () => {
-    let result = {foo: 'bar'};
-    rq.setResult(result, {status: 666});
+    let result = { foo: 'bar' };
+    rq.setResult(result, { status: 666 });
 
     should(rq.result).be.exactly(result);
     should(rq.status).eql(666);
@@ -142,26 +143,26 @@ describe('#Request', () => {
   });
 
   it('should throw if trying to set a non-integer status', () => {
-    should(function () { rq.setResult('foobar', {status: {}}); }).throw('Attribute status must be an integer');
-    should(function () { rq.setResult('foobar', {status: []}); }).throw('Attribute status must be an integer');
-    should(function () { rq.setResult('foobar', {status: true}); }).throw('Attribute status must be an integer');
-    should(function () { rq.setResult('foobar', {status: 123.45}); }).throw('Attribute status must be an integer');
+    should(function () { rq.setResult('foobar', { status: {} }); }).throw('Attribute status must be an integer');
+    should(function () { rq.setResult('foobar', { status: [] }); }).throw('Attribute status must be an integer');
+    should(function () { rq.setResult('foobar', { status: true }); }).throw('Attribute status must be an integer');
+    should(function () { rq.setResult('foobar', { status: 123.45 }); }).throw('Attribute status must be an integer');
   });
 
   it('should throw if trying to set some non-object headers', () => {
-    [ 42, [true, false], 'bar', true ].forEach(value => {
-      should(() => rq.setResult('foobar', {headers: value})).throw(
+    [42, [true, false], 'bar', true].forEach(value => {
+      should(() => rq.setResult('foobar', { headers: value })).throw(
         BadRequestError,
-        {message: 'Attribute headers must be of type "object"'});
+        { message: 'Attribute headers must be of type "object"' });
     });
   });
 
   it('should set the raw response indicator if provided', () => {
-    let result = {foo: 'bar'};
+    let result = { foo: 'bar' };
 
     should(rq.response.raw).be.false();
 
-    rq.setResult(result, {raw: true});
+    rq.setResult(result, { raw: true });
 
     should(rq.result).be.exactly(result);
     should(rq.response.raw).be.true();
@@ -169,7 +170,7 @@ describe('#Request', () => {
 
   it('should build a well-formed response', () => {
     const
-      result = {foo: 'bar'},
+      result = { foo: 'bar' },
       responseHeaders = {
         'X-Foo': 'bar',
         'X-Bar': 'baz'
@@ -187,7 +188,7 @@ describe('#Request', () => {
       },
       request = new Request(data);
 
-    request.setResult(result, {status: 201, headers: responseHeaders});
+    request.setResult(result, { status: 201, headers: responseHeaders });
     request.setError(error);
 
     const response = request.response;
@@ -206,10 +207,10 @@ describe('#Request', () => {
 
   it('should serialize the request correctly', () => {
     let
-      result = {foo: 'bar'},
+      result = { foo: 'bar' },
       error = new InternalError('foobar'),
       data = {
-        body: {some: 'body'},
+        body: { some: 'body' },
         timestamp: 'timestamp',
         index: 'idx',
         collection: 'collection',
@@ -229,7 +230,7 @@ describe('#Request', () => {
           url: 'url',
           foobar: 'barfoo',
           ips: ['i', 'p', 's'],
-          headers: {foo: 'args.headers'}
+          headers: { foo: 'args.headers' }
         }
       },
       request = new Request(data, options),
@@ -240,8 +241,8 @@ describe('#Request', () => {
 
     serialized = request.serialize();
 
-    should(serialized.data.body).match({some: 'body'});
-    should(serialized.data.volatile).match({some: 'meta'});
+    should(serialized.data.body).match({ some: 'body' });
+    should(serialized.data.volatile).match({ some: 'meta' });
     should(serialized.data.controller).be.eql('controller');
     should(serialized.data.action).be.eql('action');
     should(serialized.data.index).be.eql('idx');
@@ -256,7 +257,7 @@ describe('#Request', () => {
     should(serialized.options.result).match(result);
     should(serialized.options.status).be.eql(500);
 
-    should(serialized.headers).match({foo: 'args.headers'});
+    should(serialized.headers).match({ foo: 'args.headers' });
 
     const newRequest = new Request(serialized.data, serialized.options);
     should(newRequest.response.toJSON()).match(request.response.toJSON());
@@ -265,10 +266,10 @@ describe('#Request', () => {
 
   it('should clear the request error and status correctly', () => {
     const
-      result = {foo: 'bar'},
+      result = { foo: 'bar' },
       error = new InternalError('foobar'),
       data = {
-        body: {some: 'body'},
+        body: { some: 'body' },
         timestamp: 'timestamp',
         index: 'idx',
         collection: 'collection',
@@ -279,11 +280,11 @@ describe('#Request', () => {
           some: 'meta'
         },
         foo: 'bar',
-        headers: {foo: 'args.header'}
+        headers: { foo: 'args.header' }
       },
       request = new Request(data);
 
-    request.input.headers = {foo: 'input.header'};
+    request.input.headers = { foo: 'input.header' };
     request.setResult(result);
     request.setError(error);
 
@@ -293,5 +294,21 @@ describe('#Request', () => {
 
     should(request.error).be.eql(null);
     should(request.status).eql(200);
+  });
+
+  it('should add a deprecation when kuzzle is in development', () => {
+    process.env.NODE_ENV = 'development';
+    rq.addDeprecation('1.0.0', 'You should now use Kuzzle v2');
+
+    should(rq.deprecations).be.Array();
+    should(rq.deprecations).be.lengthOf(1);
+    should(rq.deprecations[0]).deepEqual({ version: '1.0.0', message: 'You should now use Kuzzle v2' });
+  });
+
+  it('should not add a deprecation when kuzzle is in production', () => {
+    process.env.NODE_ENV = 'production';
+    rq.addDeprecation('1.0.0', 'You should now use Kuzzle v2');
+
+    should(rq.deprecations).be.undefined();
   });
 });

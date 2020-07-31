@@ -87,6 +87,7 @@ export class RequestInput {
   /**
    * Others arguments (e.g: "refresh").
    * @example
+   * // original JSON request sent to Kuzzle
    * {
    *   controller
    *   action,
@@ -106,6 +107,7 @@ export class RequestInput {
    * Common arguments that identify Kuzzle resources.
    * (e.g: "_id", "index", "collection")
    * @example
+   * // original JSON request sent to Kuzzle
    * {
    *   controller
    *   action,
@@ -172,6 +174,7 @@ export class RequestInput {
   /**
    * Authentication token.
    * @example
+   * // original JSON request sent to Kuzzle
    * {
    *   controller
    *   action,
@@ -196,6 +199,7 @@ export class RequestInput {
   /**
    * API controller name.
    * @example
+   * // original JSON request sent to Kuzzle
    * {
    *   controller  <== that
    *   action,
@@ -223,6 +227,7 @@ export class RequestInput {
   /**
    * API action name.
    * @example
+   * // original JSON request sent to Kuzzle
    * {
    *   controller
    *   action,      <== that
@@ -251,6 +256,7 @@ export class RequestInput {
    * Request body.
    * In Http it's the request body parsed.
    * @example
+   * // original JSON request sent to Kuzzle
    * {
    *   controller
    *   action,
@@ -286,6 +292,7 @@ export class RequestInput {
   /**
    * Volatile object.
    * @example
+   * // original JSON request sent to Kuzzle
    * {
    *   controller
    *   action,

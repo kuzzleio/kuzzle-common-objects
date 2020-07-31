@@ -20,7 +20,7 @@ interface IKuzzleToken {
    */
   _id: string;
   /**
-   * Expiration date in micro-time
+   * Expiration date in Epoch-micro
    */
   expiresAt: number;
   /**

@@ -1,7 +1,7 @@
 'use strict';
 
 import * as assert from '../utils/assertType';
-import { JSONObject } from '../utils/interfaces';
+import { JSONObject, Deprecation } from '../utils/interfaces';
 import { KuzzleError } from '../errors/kuzzleError';
 
 const _request = 'request\u200b';
@@ -22,7 +22,7 @@ class Headers {
     });
   }
 
-  getHeader (name: string): string | undefined {
+  getHeader (name: string): string | void {
     if (typeof name === 'symbol') {
       return this.headers[name];
     }
@@ -132,7 +132,23 @@ export class RequestResponse {
   }
 
   /**
-   * Request HTTP status
+   * Get the parent request deprecations
+   */
+  get deprecations (): Array<Deprecation> | void {
+    return this[_request].deprecations;
+  }
+
+  /**
+   * Set the parent request deprecations
+   * @param {Object[]} deprecations
+   */
+  set deprecations (deprecations: Array<Deprecation> | void) {
+    this[_request].deprecations = deprecations;
+  }
+
+  /**
+   * Get the parent request status
+   * @returns {number}
    */
   get status (): number {
     return this[_request].status;
@@ -273,7 +289,8 @@ export class RequestResponse {
         collection: this.collection,
         index: this.index,
         volatile: this.volatile,
-        result: this.result
+        result: this.result,
+        deprecations: this.deprecations,
       },
       headers: this.headers
     };
