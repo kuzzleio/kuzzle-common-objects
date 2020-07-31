@@ -1,8 +1,7 @@
 'use strict';
 
-const
-  should = require('should'),
-  RequestContext = require('../../lib/models/requestContext');
+const should = require('should');
+const { RequestContext } = require('../../lib/models/requestContext');
 
 describe('#RequestContext', () => {
   const args = {

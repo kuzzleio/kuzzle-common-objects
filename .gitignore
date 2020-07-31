@@ -3,3 +3,13 @@ coverage
 .idea
 *.log
 .nyc_output
+
+*.d.ts
+*.js.map
+requestInput.js
+requestContext.js
+requestResponse.js
+request.js
+interfaces.js
+kuzzleError.js
+index.js

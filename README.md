@@ -15,6 +15,7 @@ Common objects shared to various Kuzzle components and plugins.
       - [`setError(error)`](#seterrorerror)
       - [`clearError()`](#clearerror)
       - [`setResult(result, [options = null])`](#setresultresult-options--null)
+      - [`addDeprecation(version, message)`](#addDeprecationversion-message)
     - [Example](#example)
   - [`RequestResponse`](#requestresponse)
     - [Attributes](#attributes-1)
@@ -97,6 +98,7 @@ Please refer to our [API Reference](http://kuzzle.io/api-reference/?websocket) f
 | `input` | `RequestInput` | [RequestInput](#modelsrequestinput) object | Request's parameters |
 | `response` | `RequestResponse` | Response view of the request, standardized as the expected [Kuzzle API response](http://kuzzle.io/api-reference/?websocket#kuzzle-response) |
 | `result` | *(varies)* | `null` | Request result, if any |
+| `deprecations` | `object[]` | `undefined` | Deprecations, if any |
 
 ### Methods
 
@@ -202,6 +204,29 @@ Result:
 }
 ```
 
+#### `addDeprecation(version, message)`
+
+Adds a deprecation on the request object allowing to notify when a controller or an action is deprecated for a specific version of Kuzzle
+
+::: info
+Deprecation messages in request responses will only be added during development stages, i.e. if the `NODE_ENV` environment variable is set to `development`.
+:::
+
+**Arguments**
+
+| Name | Type | Description                      |
+|------|------|----------------------------------|
+| `version` | `string` | target version of the deprecation |
+| `message` | `string` | description of the deprecation |
+
+**Example**
+
+```js
+let request = new Request({});
+request.addDeprecation('1.0.0', 'You should now use Kuzzle v2')
+console.log(request.deprecations) // [{ version: '1.0.0', 'You should now use Kuzzle v2' }]
+```
+
 ## `RequestResponse`
 
 This object is not exposed and can only be retrieved using the `Request.response` getter.
@@ -240,6 +265,7 @@ if (request.context.connection.protocol === 'http') {
 | `index` | `string` | Parent request data index |
 | `volatile` | `object` | Parent request volatile data |
 | `requestId` | `string` | Parent request unique identifier |
+| `deprecations` | `object[]` | Deprecations |
 
 ### Methods
 

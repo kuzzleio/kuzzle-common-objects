@@ -1,8 +1,7 @@
 'use strict';
 
-const
-  should = require('should'),
-  KuzzleError = require('../../lib/errors/kuzzleError');
+const should = require('should');
+const { KuzzleError } = require('../../lib/errors/kuzzleError');
 
 describe('#ExternalServiceError', () => {
   it('should create a well-formed object', () => {

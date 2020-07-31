@@ -1,10 +1,9 @@
 'use strict';
 
-const
-  should = require('should'),
-  BadRequestError = require('../../lib/errors/badRequestError'),
-  Request = require('../../lib/request'),
-  RequestResponse = require('../../lib/models/requestResponse');
+const should = require('should');
+const BadRequestError = require('../../lib/errors/badRequestError');
+const { Request } = require('../../lib/request');
+const { RequestResponse } = require('../../lib/models/requestResponse');
 
 describe('#RequestResponse', () => {
   let req;
@@ -32,6 +31,7 @@ describe('#RequestResponse', () => {
       should(response.volatile).be.exactly(req.input.volatile);
       should(response.headers).be.an.Object().and.be.empty();
       should(response.result).be.exactly(req.result);
+      should(response.deprecations).be.undefined();
     });
 
     it('should throw if we try to extend the response', () => {
@@ -278,7 +278,8 @@ describe('#RequestResponse', () => {
         'collection',
         'index',
         'volatile',
-        'result'
+        'result',
+        'deprecations'
       ]);
       should(response.toJSON().raw).be.false();
       should(response.toJSON().headers).match({'x-foo': 'bar'});

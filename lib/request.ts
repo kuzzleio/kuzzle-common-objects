@@ -1,12 +1,14 @@
 'use strict';
 
-const { v4: uuidv4 } = require('uuid');
-const assert = require('./utils/assertType');
-const RequestContext = require('./models/requestContext');
-const RequestInput = require('./models/requestInput');
-const RequestResponse = require('./models/requestResponse');
-const KuzzleError = require('./errors/kuzzleError');
-const InternalError = require('./errors/internalError');
+import * as uuid from 'uuid';
+
+import { RequestInput } from './models/requestInput';
+import { RequestResponse } from './models/requestResponse';
+import { RequestContext } from './models/requestContext';
+import { KuzzleError } from './errors/kuzzleError';
+import { InternalError } from './errors/';
+import { JSONObject, Deprecation } from './utils/interfaces';
+import * as assert from './utils/assertType';
 
 // private properties
 // \u200b is a zero width space, used to masquerade console.log output
@@ -18,6 +20,7 @@ const _result = 'result\u200b';
 const _context = 'context\u200b';
 const _timestamp = 'timestamp\u200b';
 const _response = 'response\u200b';
+const _deprecations = 'deprecations\u200b';
 
 /**
  * Builds a Kuzzle normalized request object
@@ -43,56 +46,22 @@ const _response = 'response\u200b';
  * the internalId is used to identify a request by Kuzzle, and
  * the requestId should only be used by clients or plugins.
  *
- * @class
- * @param {Object} data - raw request content
- * @param {Object} [options]
  */
+export class Request {
+  /**
+   * Request external ID (specified by "requestId" or random uuid)
+   */
+  public id: string;
 
-/**
- * @name  Request#internalId
- * @type {string}
- */
-/**
- * @name Request#timestamp
- * @type {number}
- */
-/**
- * @name Request#id
- * @type {string}
- */
-/**
- * @name Request#input
- * @type {RequestInput}
- */
-/**
- * @name Request#status
- * @type {number}
- */
-/**
- * @name Request#error
- * @type {KuzzleError}
- */
-/**
- * @name Request#response
- * @type {RequestResponse}
- */
-/**
- * @name Request#result
- * @type {*}
- */
-/**
- * @name Request#context
- * @type {RequestContext}
- */
-class Request {
-  constructor(data, options) {
-    this[_internalId] = uuidv4();
+  constructor (data: any, options: any) {
+    this[_internalId] = uuid.v4();
     this[_status] = 102;
     this[_input] = new RequestInput(data);
     this[_context] = new RequestContext(options);
     this[_error] = null;
     this[_result] = null;
     this[_response] = null;
+    this[_deprecations] = undefined;
 
     // @deprecated - Backward compatibility with the RequestInput.headers
     // property
@@ -100,7 +69,7 @@ class Request {
 
     this.id = data.requestId
       ? assert.assertString('requestId', data.requestId)
-      : uuidv4();
+      : uuid.v4();
 
     this[_timestamp] = data.timestamp || Date.now();
 
@@ -121,7 +90,7 @@ class Request {
        * been specified.
        */
       if (options.result) {
-        this.setResult(options.result, options.status, options.responseHeaders);
+        this.setResult(options.result, options);
       }
 
       if (options.error) {
@@ -148,90 +117,87 @@ class Request {
   }
 
   /**
-   * Request internal identifier getter
-   * @return {string}
+   * Request internal ID
    */
-  get internalId () {
+  get internalId (): string {
     return this[_internalId];
   }
 
   /**
-   * Request timestamp getter
-   * @returns {number}
+   * Request internal identifier getter
    */
-  get timestamp () {
+  get deprecations (): Array<Deprecation> | void {
+    return this[_deprecations];
+  }
+
+  set deprecations (deprecations: Array<Deprecation> | void) {
+    this[_deprecations] = assert.assertArray('deprecations', deprecations, 'object');
+  }
+
+
+  /**
+   * Request timestamp (in Epoch-micro)
+   */
+  get timestamp (): number {
     return this[_timestamp];
   }
 
   /**
-   * Request status getter
-   * @returns {number}
+   * Request HTTP status
    */
-  get status () {
+  get status (): number {
     return this[_status];
   }
 
-  /**
-   * Request status setter
-   * @param {number} i - new request status
-   */
-  set status (i) {
+  set status (i: number) {
     this[_status] = assert.assertInteger('status', i);
   }
 
   /**
-   * Request input getter
-   * @returns {RequestInput}
+   * Request input
    */
-  get input () {
+  get input (): RequestInput {
     return this[_input];
   }
 
   /**
-   * Request context getter
-   * @returns {RequestContext}
+   * Request context
    */
-  get context () {
+  get context (): RequestContext {
     return this[_context];
   }
 
   /**
-   * Request error getter
-   * @returns {null|KuzzleError}
+   * Request error
    */
-  get error () {
+  get error (): KuzzleError | null {
     return this[_error];
   }
 
   /**
-   * Request result getter
-   * @returns {null|*}
+   * Request result
    */
-  get result () {
+  get result (): any | null {
     return this[_result];
   }
 
   /**
-   * Request response getter
-   * @returns {{status: (number|*), error: (null|*), requestId: string, controller: string, action: string, collection: string, index: string, volatile: Object, headers: (Array|*), result: (null|*|Object)}}
+   * Request response
    */
-  get response () {
+  get response (): RequestResponse {
     if (this[_response] === null) {
       this[_response] = new RequestResponse(this);
     }
+
     return this[_response];
   }
 
   /**
    * Sets the request status to the error one, and fills the error member
-   *
-   * @name setError
-   * @param {Object} error
-   * @memberOf Request
    */
-  setError(error) {
+  setError (error: Error) {
     if (!error || !(error instanceof Error)) {
-      throw new InternalError('cannot set non-error object as a request\'s error');
+      throw new InternalError('Cannot set non-error object as a request\'s error');
     }
 
     this[_error] = error instanceof KuzzleError ? error : new InternalError(error);
@@ -240,31 +206,38 @@ class Request {
 
   /**
    * Sets the request error to null and status to 200
-   *
-   * @name clearError
-   * @memberOf Request
    */
-  clearError() {
+  clearError () {
     this[_error] = null;
     this.status = 200;
   }
 
   /**
-   * Sets the result and request status
+   * Sets the request result and status
    *
-   * Optional parameters can be provided with the "options" argument.
-   * This optional object may contain the following properties:
-   *   - status (number): HTTP status code (default: 200)
-   *   - headers (object): additional response protocol headers (default: null)
-   *   - raw (boolean): instead of a Kuzzle response, forward the result directly (default: false)
-   *
-   * @param {Object} result - result content
-   * @param {Object} [options] - response options
-   * @memberOf Request
+   * @param result Request result. Will be converted to JSON unless `raw` option is set to `true`
+   * @param options Additional options
+   *    - `status` (number): HTTP status code (default: 200)
+   *    - `headers` (JSONObject): additional response protocol headers (default: null)
+   *    - `raw` (boolean): instead of a Kuzzle response, forward the result directly (default: false)
    */
-  setResult(result, options) {
-    options = options || {};
-
+  setResult (
+    result: any,
+    options: {
+      /**
+       * HTTP status code
+       */
+      status?: number
+      /**
+       * additional response protocol headers
+       */
+      headers?: JSONObject | null;
+      /**
+       * Returns directly the result instead of wrapping it in a Kuzzle response
+       */
+      raw?: boolean;
+    } = {}
+  ) {
     if (result instanceof Error) {
       throw new InternalError('cannot set an error as a request\'s response');
     }
@@ -283,14 +256,35 @@ class Request {
   }
 
   /**
+   * Add a deprecation for a used component, this can be action/controller/parameters...
+   *
+   * @param version version where the used component has been deprecated
+   * @param message message displayed in the warning
+   */
+  addDeprecation (version: string, message: string) {
+    if (process.env.NODE_ENV !== 'development') {
+      return;
+    }
+
+    const deprecation = {
+      version,
+      message
+    };
+
+    if (!this.deprecations) {
+      this.deprecations = [deprecation];
+    }
+    else {
+      this.deprecations.push(deprecation);
+    }
+  }
+
+  /**
    * Serialize this object into a pair of POJOs that can be send
    * across the network and then used to instantiate a new Request
    * object
-   *
-   * @return {object}
-   * @memberOf Request
    */
-  serialize() {
+  serialize (): JSONObject {
     const serialized = {
       data: {
         timestamp: this[_timestamp],
@@ -320,8 +314,4 @@ class Request {
   }
 }
 
-
-/**
- * @type {Request}
- */
-module.exports = Request;
+module.exports = { Request };
