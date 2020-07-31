@@ -195,7 +195,7 @@ export class Request {
   /**
    * Sets the request status to the error one, and fills the error member
    */
-  setError (error: KuzzleError) {
+  setError (error: Error) {
     if (!error || !(error instanceof Error)) {
       throw new InternalError('Cannot set non-error object as a request\'s error');
     }
