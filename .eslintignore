@@ -1,0 +1,9 @@
+# JS generated files from TS
+lib/**/*.d.ts
+lib/**/*.js.map
+lib/utils/interfaces.js
+lib/models/requestInput.js
+lib/errors/kuzzleError.js
+lib/models/requestResponse.js
+lib/models/requestContext.js
+lib/request.js

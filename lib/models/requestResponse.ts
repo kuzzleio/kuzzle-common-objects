@@ -1,25 +1,35 @@
 'use strict';
 
-const assert = require('../utils/assertType');
+import * as assert from '../utils/assertType';
+import { JSONObject, Deprecation } from '../utils/interfaces';
+import { KuzzleError } from '../errors/kuzzleError';
 
-const
-  _request = 'request\u200b',
-  _headers = 'headers\u200b';
+const _request = 'request\u200b';
+const _headers = 'headers\u200b';
 
 class Headers {
+  public headers: JSONObject;
+  private namesMap: Map<string, string>;
+  private proxy: JSONObject;
+
   constructor() {
     this.namesMap = new Map();
     this.headers = {};
     this.proxy = new Proxy(this.headers, {
-      get: (target, name) => this.getHeader(name),
-      set: (target, name, value) => this.setHeader(name, value),
-      deleteProperty: (target, name) => this.removeHeader(name)
+      get: (target, name) => this.getHeader(name as string),
+      set: (target, name, value) => this.setHeader(name as string, value),
+      deleteProperty: (target, name) => this.removeHeader(name as string)
     });
   }
 
-  getHeader (name) {
+  /**
+   * Gets a header value
+   *
+   * @param name Header name. Could be a string (case-insensitive) or a symbol
+   */
+  getHeader (name: any): string | void {
     if (typeof name === 'symbol') {
-      return this.headers[name];
+      return this.headers[name as unknown as string];
     }
 
     assert.assertString('header name', name);
@@ -31,16 +41,15 @@ class Headers {
     return this.headers[this.namesMap.get(name.toLowerCase())];
   }
 
-  removeHeader (name) {
+  removeHeader (name: string): boolean {
     assert.assertString('header name', name);
 
     if (!name) {
       return true;
     }
 
-    const
-      lowerCased = name.toLowerCase(),
-      storedName = this.namesMap.get(lowerCased);
+    const lowerCased = name.toLowerCase();
+    const storedName = this.namesMap.get(lowerCased);
 
     if (storedName) {
       delete this.headers[storedName];
@@ -50,16 +59,15 @@ class Headers {
     return true;
   }
 
-  setHeader (name, value) {
+  setHeader (name: string, value: string): boolean {
     assert.assertString('header name', name);
 
     if (!name) {
       return true;
     }
 
-    const
-      lowerCased = name.toLowerCase(),
-      _value = String(value);
+    const lowerCased = name.toLowerCase();
+    const _value = String(value);
 
     let _name = this.namesMap.get(lowerCased);
 
@@ -112,13 +120,14 @@ class Headers {
 }
 
 /**
- * Kuzzle normalized response
- *
- * @class
- * @param {Request} request
- *
+ * Kuzzle normalized API response
  */
-class RequestResponse {
+export class RequestResponse {
+  /**
+   * If sets to true, "result" content will not be wrapped in a Kuzzle response
+   */
+  public raw: boolean;
+
   constructor (request) {
     this.raw = false;
     this[_request] = request;
@@ -129,9 +138,8 @@ class RequestResponse {
 
   /**
    * Get the parent request deprecations
-   * @returns {Object[]}
    */
-  get deprecations () {
+  get deprecations (): Array<Deprecation> | void {
     return this[_request].deprecations;
   }
 
@@ -139,7 +147,7 @@ class RequestResponse {
    * Set the parent request deprecations
    * @param {Object[]} deprecations
    */
-  set deprecations (deprecations) {
+  set deprecations (deprecations: Array<Deprecation> | void) {
     this[_request].deprecations = deprecations;
   }
 
@@ -147,138 +155,111 @@ class RequestResponse {
    * Get the parent request status
    * @returns {number}
    */
-  get status () {
+  get status (): number {
     return this[_request].status;
   }
 
-  /**
-   * Set the parent request status
-   * @param {number} s
-   */
-  set status (s) {
+  set status (s: number) {
     this[_request].status = s;
   }
 
   /**
-   * Get the parent request error
-   * @returns {KuzzleError}
+   * Request error
    */
-  get error () {
+  get error (): KuzzleError | null {
     return this[_request].error;
   }
 
-  /**
-   * Set the parent request error
-   * @param {KuzzleError} e
-   */
-  set error (e) {
+  set error (e: KuzzleError | null) {
     this[_request].setError(e);
   }
 
   /**
-   * Get the parent request id
-   * @returns {string|*|String}
+   * Request external ID
    */
-  get requestId () {
+  get requestId (): string | null {
     return this[_request].id;
   }
 
   /**
-   * Get the parent request controller
-   * @returns {string}
+   * API controller name
    */
-  get controller () {
+  get controller (): string | null {
     return this[_request].input.controller;
   }
 
   /**
-   * Get the parent request action
-   * @returns {string}
+   * API action name
    */
-  get action () {
+  get action (): string | null {
     return this[_request].input.action;
   }
 
   /**
-   * Get the parent request collection
-   * @returns {string}
+   * Collection name
    */
-  get collection () {
+  get collection (): string | null {
     return this[_request].input.resource.collection;
   }
 
   /**
-   * Get the parent request index
-   * @returns {string}
+   * Index name
    */
-  get index () {
+  get index (): string | null {
     return this[_request].input.resource.index;
   }
 
   /**
-   * Get the parent request volatile data
-   * @returns {Object}
+   * Volatile object
    */
-  get volatile () {
+  get volatile (): JSONObject | null {
     return this[_request].input.volatile;
   }
 
   /**
-   * Get the response headers - reference to private parent request property
-   * @returns {*}
+   * Response headers
    */
-  get headers () {
+  get headers (): JSONObject {
     return this[_headers].proxy;
   }
 
   /**
-   * Get the parent request result
-   * @returns {*|null|*|Object}
+   * Request result
    */
-  get result () {
+  get result (): any {
     return this[_request].result;
   }
 
-  /**
-   * Set the parent request result
-   * @param {*} r
-   */
-  set result (r) {
+  set result (r: any) {
     this[_request].setResult(r);
   }
 
   /**
-   * Get the header value for {name} (case-insensitive)
-   * @public
-   * @param {string} name
+   * Gets a header value (case-insensitive)
    */
-  getHeader (name) {
+  getHeader (name: string): string | null {
     return this[_headers].getHeader(name);
   }
 
   /**
-   * Delete the header matching {name} (case-insensitive=
-   * @param {string} name
+   * Deletes a header (case-insensitive)
    */
-  removeHeader (name) {
+  removeHeader (name: string) {
     return this[_headers].removeHeader(name);
   }
 
   /**
-   * Set a new array. Behaves the same as Node.js' HTTP response.setHeader
+   * Sets a new array. Behaves the same as Node.js' HTTP response.setHeader
    * method (@see https://nodejs.org/api/http.html#http_response_setheader_name_value)
-   * @param {string} name
-   * @param {*} value
    */
-  setHeader (name, value) {
+  setHeader (name: string, value: string) {
     return this[_headers].setHeader(name, value);
   }
 
   /**
-   * Add new multiple headers.
-   * @param {object} headers
+   * Adds new multiple headers.
    */
-  setHeaders (headers) {
+  setHeaders (headers: JSONObject) {
     assert.assertObject('headers', headers);
 
     if (headers) {
@@ -287,10 +268,9 @@ class RequestResponse {
   }
 
   /**
-   * Serialize the response. Exposes the prototype getters values
-   * @returns {object}
+   * Serializes the response.
    */
-  toJSON () {
+  toJSON (): JSONObject {
     if (this.raw === true) {
       return {
         raw: true,
@@ -322,4 +302,4 @@ class RequestResponse {
   }
 }
 
-module.exports = RequestResponse;
+module.exports = { RequestResponse };

@@ -9,16 +9,26 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
+    "@types/node": "^14.0.22",
+    "@typescript-eslint/eslint-plugin": "^3.6.0",
+    "@typescript-eslint/parser": "^3.6.0",
     "codecov": "^3.6.5",
     "eslint": "^6.8.0",
     "mocha": "^7.1.1",
     "nyc": "^15.0.1",
-    "should": "^13.2.3"
+    "should": "^13.2.3",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.6"
   },
   "scripts": {
-    "test": "npm run --silent lint && npm run unit-testing",
-    "unit-testing": "nyc --reporter=text-summary --reporter=lcov mocha",
-    "lint": "eslint --max-warnings=0 index.js ./lib ./test",
+    "prepublishOnly": "npm run build",
+    "build": "npm run build-ts",
+    "build-ts": "tsc --build tsconfig.json",
+    "test": "npm run --silent test:lint && npm run test:unit",
+    "test:unit": "nyc --reporter=text-summary --reporter=lcov mocha",
+    "test:lint": "npm run test:lint:js && npm run test:lint:ts",
+    "test:lint:js": "eslint --max-warnings=0 ./lib ./test",
+    "test:lint:ts": "eslint ./lib --ext .ts --config .eslintc-ts.json",
     "codecov": "codecov"
   },
   "repository": {
@@ -26,11 +36,12 @@
     "url": "git://github.com/kuzzleio/kuzzle-common-objects.git"
   },
   "engines": {
-    "node": ">= 4.4.5",
-    "npm": ">= 2.14.4"
+    "node": ">= 12.13.0"
   },
   "files": [
     "index.js",
-    "lib/**/*"
+    "index.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.d.ts"
   ]
 }

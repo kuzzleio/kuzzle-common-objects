@@ -1,10 +1,9 @@
 'use strict';
 
-const
-  should = require('should'),
-  BadRequestError = require('../../lib/errors/badRequestError'),
-  Request = require('../../lib/request'),
-  RequestResponse = require('../../lib/models/requestResponse');
+const should = require('should');
+const BadRequestError = require('../../lib/errors/badRequestError');
+const { Request } = require('../../lib/request');
+const { RequestResponse } = require('../../lib/models/requestResponse');
 
 describe('#RequestResponse', () => {
   let req;

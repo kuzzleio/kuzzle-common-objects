@@ -1,8 +1,7 @@
 'use strict';
 
-const
-  should = require('should'),
-  RequestInput = require('../../lib/models/requestInput');
+const should = require('should');
+const { RequestInput } = require('../../lib/models/requestInput');
 
 describe('#RequestInput', () => {
   it('should defaults to null all properties', () => {

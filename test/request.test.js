@@ -1,13 +1,15 @@
 'use strict';
 
-const
-  should = require('should'),
-  KuzzleError = require('../lib/errors/kuzzleError'),
-  InternalError = require('../lib/errors/internalError'),
-  BadRequestError = require('../lib/errors/badRequestError'),
-  Request = require('../lib/request'),
-  RequestContext = require('../lib/models/requestContext'),
-  RequestInput = require('../lib/models/requestInput');
+const should = require('should');
+
+const {
+  KuzzleError,
+  InternalError,
+  BadRequestError
+} = require('../lib/errors');
+const { Request } = require('../lib/request');
+const { RequestContext } = require('../lib/models/requestContext');
+const { RequestInput } = require('../lib/models/requestInput');
 
 describe('#Request', () => {
   let rq;
@@ -117,7 +119,7 @@ describe('#Request', () => {
   });
 
   it('should throw if attempting to set a non-error object as a request error', () => {
-    should(function () { rq.setError('foo'); }).throw(/^cannot set non-error object.*$/);
+    should(function () { rq.setError('foo'); }).throw(/^Cannot set non-error object.*$/);
   });
 
   it('should set the provided result with default status 200', () => {
