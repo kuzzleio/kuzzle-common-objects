@@ -31,7 +31,6 @@ describe('#assertType', () => {
     });
 
     it('should throw if the provided array contains a value of an unexpected type', () => {
-      console.log({BadRequestError})
       for (const wrong of [{}, [], 123, true, false]) {
         const arr = ['foo', wrong, 'bar'];
         should(() => assert.assertArray('foo', arr, 'string'))

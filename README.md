@@ -224,7 +224,7 @@ Deprecation messages in request responses will only be added during development 
 ```js
 let request = new Request({});
 request.addDeprecation('1.0.0', 'You should now use Kuzzle v2')
-console.log(request.deprecations) // [{ version: '1.0.0', 'You should now use Kuzzle v2' }]
+console.log(request.deprecations) // [{ version: '1.0.0', message: 'You should now use Kuzzle v2' }]
 ```
 
 ## `RequestResponse`
