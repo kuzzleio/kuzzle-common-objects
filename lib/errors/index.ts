@@ -5,7 +5,6 @@ export * from './gatewayTimeoutError';
 export * from './internalError';
 export * from './kuzzleError';
 export * from './notFoundError';
-export * from './parseError';
 export * from './partialError';
 export * from './pluginImplementationError';
 export * from './serviceUnavailableError';
