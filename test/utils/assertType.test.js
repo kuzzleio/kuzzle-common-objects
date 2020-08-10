@@ -1,7 +1,7 @@
 const
   should = require('should'),
   assert = require('../../lib/utils/assertType'),
-  BadRequestError = require('../../lib/errors/badRequestError');
+  {BadRequestError} = require('../../lib/errors/badRequestError');
 
 describe('#assertType', () => {
   describe('#assertArray', () => {

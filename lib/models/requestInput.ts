@@ -1,6 +1,6 @@
 'use strict';
 
-import * as InternalError from '../errors/internalError';
+import { InternalError } from '../errors/internalError';
 import * as assert from '../utils/assertType';
 import { JSONObject } from '../utils/interfaces';
 

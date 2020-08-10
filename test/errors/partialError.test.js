@@ -2,7 +2,7 @@
 
 const
   should = require('should'),
-  PartialError = require('../../lib/errors/partialError');
+  { PartialError } = require('../../lib/errors/partialError');
 
 describe('#PartialError', () => {
   it('should create a well-formed object with no body provided', () => {

@@ -7,7 +7,6 @@ const {
   GatewayTimeoutError,
   InternalError,
   NotFoundError,
-  ParseError,
   PluginImplementationError,
   ServiceUnavailableError,
   SizeLimitError,
@@ -69,15 +68,6 @@ describe('Errors', () => {
     should(error.id).be.eql('id.error');
     should(error.code).be.eql(4242);
     should(error.status).be.eql(500);
-  });
-
-  it('should constructs ParseError', () => {
-    const error = new ParseError('message', 'id.error', 4242);
-
-    should(error.message).be.eql('message');
-    should(error.id).be.eql('id.error');
-    should(error.code).be.eql(4242);
-    should(error.status).be.eql(400);
   });
 
   it('should constructs NotFoundError', () => {
