@@ -37,7 +37,6 @@ Common objects shared to various Kuzzle components and plugins.
   - [`errors.GatewayTimeoutError`](#errorsgatewaytimeouterror)
   - [`errors.InternalError`](#errorsinternalerror)
   - [`errors.NotFoundError`](#errorsnotfounderror)
-  - [`errors.ParseError`](#errorsparseerror)
   - [`errors.PartialError`](#errorspartialerror)
   - [`errors.PluginImplementationError`](#errorspluginimplementationerror)
   - [`errors.ServiceUnavailableError`](#errorsserviceunavailableerror)
@@ -224,7 +223,7 @@ Deprecation messages in request responses will only be added during development 
 ```js
 let request = new Request({});
 request.addDeprecation('1.0.0', 'You should now use Kuzzle v2')
-console.log(request.deprecations) // [{ version: '1.0.0', 'You should now use Kuzzle v2' }]
+console.log(request.deprecations) // [{ version: '1.0.0', message: 'You should now use Kuzzle v2' }]
 ```
 
 ## `RequestResponse`
@@ -472,18 +471,6 @@ Used when asked resources cannot be found.
 const errors = require('kuzzle-common-objects').errors;
 
 let err = new errors.NotFoundError('error message');
-```
-
-## `errors.ParseError`
-
-**Status Code:** `400`
-
-Used when a provided resource cannot be interpreted.
-
-```js
-const errors = require('kuzzle-common-objects').errors;
-
-let err = new errors.ParseError('error message');
 ```
 
 ## `errors.PartialError`

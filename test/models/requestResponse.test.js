@@ -1,7 +1,8 @@
 'use strict';
 
 const should = require('should');
-const BadRequestError = require('../../lib/errors/badRequestError');
+
+const { BadRequestError } = require('../../lib/errors/badRequestError');
 const { Request } = require('../../lib/request');
 const { RequestResponse } = require('../../lib/models/requestResponse');
 
@@ -177,12 +178,7 @@ describe('#RequestResponse', () => {
     });
 
     it('should throw if setHeader is called with non-string names', () => {
-      [
-        {},
-        1.42,
-        true,
-        []
-      ].forEach(name => {
+      [ {}, 1.42, true, [] ].forEach(name => {
         should(() => response.setHeader(name, 'test')).throw(BadRequestError);
       });
     });
