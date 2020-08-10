@@ -24,24 +24,24 @@ Common objects shared to various Kuzzle components and plugins.
       - [`removeHeader(name)`](#removeheadername)
       - [`setHeader(name, value)`](#setheadername-value)
       - [`setHeaders(headers)`](#setheadersheaders)
-  - [`models.RequestContext`](#modelsrequestcontext)
+  - [`RequestContext`](#srequestcontext)
     - [`new RequestContext([options])`](#new-requestcontextoptions)
     - [Attributes](#attributes-2)
-  - [`models.RequestInput`](#modelsrequestinput)
+  - [`RequestInput`](#srequestinput)
     - [`new RequestInput(data)`](#new-requestinputdata)
     - [Attributes](#attributes-3)
-  - [`errors.KuzzleError`](#errorskuzzleerror)
-  - [`errors.BadRequestError`](#errorsbadrequesterror)
-  - [`errors.ExternalServiceError`](#errorsexternalserviceerror)
-  - [`errors.ForbiddenError`](#errorsforbiddenerror)
-  - [`errors.GatewayTimeoutError`](#errorsgatewaytimeouterror)
-  - [`errors.InternalError`](#errorsinternalerror)
-  - [`errors.NotFoundError`](#errorsnotfounderror)
-  - [`errors.PartialError`](#errorspartialerror)
-  - [`errors.PluginImplementationError`](#errorspluginimplementationerror)
-  - [`errors.ServiceUnavailableError`](#errorsserviceunavailableerror)
-  - [`errors.SizeLimitError`](#errorssizelimiterror)
-  - [`errors.UnauthorizedError`](#errorsunauthorizederror)
+  - [`KuzzleError`](#kuzzleerror)
+  - [`BadRequestError`](#badrequesterror)
+  - [`ExternalServiceError`](#externalserviceerror)
+  - [`ForbiddenError`](#forbiddenerror)
+  - [`GatewayTimeoutError`](#gatewaytimeouterror)
+  - [`InternalError`](#internalerror)
+  - [`NotFoundError`](#notfounderror)
+  - [`PartialError`](#partialerror)
+  - [`PluginImplementationError`](#pluginimplementationerror)
+  - [`ServiceUnavailableError`](#serviceunavailableerror)
+  - [`SizeLimitError`](#sizelimiterror)
+  - [`UnauthorizedError`](#unauthorizederror)
 
 ## `Request`
 
@@ -310,7 +310,7 @@ Adds multiple items to the response headers.
 
 The `setHeader` method will be called for each item of the `headers` argument.
 
-## `models.RequestContext`
+## `RequestContext`
 
 This constructor is used to create a connection context used by `Request`.
 
@@ -351,7 +351,7 @@ This constructor is used to create a connection context used by `Request`.
 | `ips` | `array` | Array of known IP addresses for the connection |
 | `misc` | `object` | Contain additional connection properties, depending on the connection's protocol used (for instance, input HTTP headers) |
 
-## `models.RequestInput`
+## `RequestInput`
 
 Contains the request's input data
 
@@ -395,85 +395,85 @@ Other attributes may be defined and will automatically be added to the `args` ob
 | `resource.index` | `string` | `null` | Data index |
 | `jwt` | `string` | `null` | JWT Authentication token |
 
-## `errors.KuzzleError`
+## `KuzzleError`
 
 Inherits from `Error`. Abstract class inherited by Kuzzle error objects.
 
 This class should only be used to create new Kuzzle error objects.
 
-## `errors.BadRequestError`
+## `BadRequestError`
 
 **Status Code:** `400`
 
 Used to notify about badly formed requests.
 
 ```js
-const errors = require('kuzzle-common-objects').errors;
+const { { BadRequestError } = require('kuzzle-common-objects');
 
-let err = new errors.BadRequestError('error message');
+throw new BadRequestError('error message');
 ```
 
-## `errors.ExternalServiceError`
+## `ExternalServiceError`
 
 **Status Code:** `500`
 
 Used when an external service answers to a request with an error other than a bad request or a service unavailable one.
 
 ```js
-const errors = require('kuzzle-common-objects').errors;
+const { ExternalServiceError } = require('kuzzle-common-objects');
 
-let err = new errors.ExternalServiceError('error message');
+throw new ExternalServiceError('error message');
 ```
 
-## `errors.ForbiddenError`
+## `ForbiddenError`
 
 **Status Code:** `403`
 
 Used when a user tries to use resources beyond his access rights.
 
 ```js
-const errors = require('kuzzle-common-objects').errors;
+const { ForbiddenError } = require('kuzzle-common-objects');
 
-let err = new errors.ForbiddenError('error message');
+throw new ForbiddenError('error message');
 ```
 
-## `errors.GatewayTimeoutError`
+## `GatewayTimeoutError`
 
 **Status Code:** `504`
 
 Used when a plugin takes too long to perform a task.
 
 ```js
-const errors = require('kuzzle-common-objects').errors;
+const { GatewayTimeoutError } = require('kuzzle-common-objects');
 
-let err = new errors.GatewayTimeoutError('error message');
+throw new GatewayTimeoutError('error message');
 ```
 
-## `errors.InternalError`
+## `InternalError`
 
 **Status Code:** `500`
 
 Standard generic error. Used mainly for uncatched exceptions.
 
 ```js
-const errors = require('kuzzle-common-objects').errors;
+const { InternalError } = require('kuzzle-common-objects');
 
-let err = new errors.InternalError('error message');
+throw new InternalError('error message');
 ```
 
-## `errors.NotFoundError`
+## `NotFoundError`
 
 **Status Code:** `404`
 
 Used when asked resources cannot be found.
 
 ```js
-const errors = require('kuzzle-common-objects').errors;
+const { NotFoundError } = require('kuzzle-common-objects');
 
-let err = new errors.NotFoundError('error message');
+throw new NotFoundError('error message');
 ```
 
-## `errors.PartialError`
+## `PartialError`
 
 **Status Code:** `206`
 
@@ -482,56 +482,56 @@ Used when a request only partially succeeded.
 The constructor takes an additional `array` argument containing a list of failed parts.
 
 ```js
-const errors = require('kuzzle-common-objects').errors;
+const { PartialError } = require('kuzzle-common-objects');
 
-let err = new errors.PartialError('error message', [{this: 'failed'}, {andThis: 'failed too'}]);
+throw new PartialError('error message', [{this: 'failed'}, {andThis: 'failed too'}]);
 ```
 
 
-## `errors.PluginImplementationError`
+## `PluginImplementationError`
 
 **Status Code:** `500`
 
 Used when a plugin fails.
 
 ```js
-const errors = require('kuzzle-common-objects').errors;
+const { PluginImplementationError } = require('kuzzle-common-objects');
 
-let err = new errors.PluginImplementationError('error message');
+throw new PluginImplementationError('error message');
 ```
 
-## `errors.ServiceUnavailableError`
+## `ServiceUnavailableError`
 
 **Status Code:** `503`
 
 Used when a service cannot respond because it is temporarily unavailable.
 
 ```js
-const errors = require('kuzzle-common-objects').errors;
+const { ServiceUnavailableError } = require('kuzzle-common-objects');
 
-let err = new errors.ServiceUnavailableError('error message');
+throw new ServiceUnavailableError('error message');
 ```
 
-## `errors.SizeLimitError`
+## `SizeLimitError`
 
 **Status Code:** `413`
 
 Used to notify about requests exceeding maximum limits.
 
 ```js
-const errors = require('kuzzle-common-objects').errors;
+const { SizeLimitError } = require('kuzzle-common-objects');
 
-let err = new errors.SizeLimitError('error message');
+throw new SizeLimitError('error message');
 ```
 
-## `errors.UnauthorizedError`
+## `UnauthorizedError`
 
 **Status Code:** `401`
 
 Used when a user fails a login attempt.
 
 ```js
-const errors = require('kuzzle-common-objects').errors;
+const { UnauthorizedError } = require('kuzzle-common-objects');
 
-let err = new errors.UnauthorizedError('error message');
+throw new UnauthorizedError('error message');
 ```
