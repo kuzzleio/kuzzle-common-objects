@@ -60,21 +60,36 @@ interface IKuzzleUser extends JSONObject {
 // ClientConnection class from Kuzzle
 interface IKuzzleConnection extends JSONObject {
   /**
-   * Internal ID
+   * Unique identifier of the user connection
    */
   id: string;
   /**
-   * Protocol name
+   * Network protocol name
    */
   protocol: string;
   /**
-   * Optional headers
-   */
-  headers: JSONObject;
-  /**
-   * Associated IP adresses
+   * Chain of IP addresses, starting from the client
    */
   ips: Array<string>;
+  /**
+   * Contains protocol specific information (e.g. HTTP queries URL or headers)
+   */
+  misc: {
+    /**
+     * HTTP url
+     */
+    url?: string;
+    /**
+     * HTTP headers
+     */
+    verb?: string;
+    /**
+     * HTTP headers
+     */
+    headers?: JSONObject;
+
+    [key: string]: any
+  };
 }
 
 interface IRequestContextOptions {
