@@ -118,7 +118,7 @@ interface IRequestContextOptions {
 /**
  * Information about the connection at the origin of the request.
  */
-class Connection {
+class Connection implements IKuzzleConnection {
   constructor (connection: IKuzzleConnection) {
     this[_c_id] = null;
     this[_c_protocol] = null;
@@ -145,9 +145,6 @@ class Connection {
     this[_c_id] = assert.assertString('connection.id', str);
   }
 
-  /**
-   * Internal connection ID
-   */
   get id (): string | null {
     return this[_c_id];
   }
@@ -156,9 +153,6 @@ class Connection {
     this[_c_protocol] = assert.assertString('connection.protocol', str);
   }
 
-  /**
-   * Protocol name
-   */
   get protocol (): string | null {
     return this[_c_protocol];
   }
@@ -167,16 +161,10 @@ class Connection {
     this[_c_ips] = assert.assertArray('connection.ips', arr, 'string');
   }
 
-  /**
-   * Array of IP addresses associated to the request
-   */
   get ips(): Array<string> {
     return this[_c_ips];
   }
 
-  /**
-   * Other custom informations
-   */
   get misc (): JSONObject {
     return this[_c_misc];
   }
@@ -258,7 +246,7 @@ export class RequestContext {
   /**
    * Connection that initiated the request
    */
-  get connection (): IKuzzleConnection {
+  get connection (): Connection {
     return this[_connection];
   }
 
