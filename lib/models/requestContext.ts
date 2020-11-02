@@ -77,8 +77,13 @@ interface IKuzzleConnection extends JSONObject {
   misc: {
     /**
      * HTTP url
+     * @deprecated use "path" instead
      */
     url?: string;
+    /**
+     * HTTP path
+     */
+    path?: string;
     /**
      * HTTP headers
      */
