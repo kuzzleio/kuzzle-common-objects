@@ -1,13 +1,14 @@
 language: node_js
 node_js:
-- 12
+  - 12
 install:
-- npm ci --silent
+  - npm ci --silent
 script:
-- npm test && cat ./coverage/lcov.info | ./node_modules/.bin/codecov
+  - npm test && cat ./coverage/lcov.info | ./node_modules/.bin/codecov
 deploy:
   provider: npm
   email: support@kuzzle.io
+  before_deploy: "npm ci --silent"
   api_key:
     secure: Y25l4s5xUeMTRMj8F8MnHhIPjnvA61jNeC/kKhqO8oQhvVz4TVuwsjpzLBQOmstwuhne4ojzVv/7Q/a/H2qy9KFnudq0exZzml7h0/z4mdJSlq+7B1tr0uwkQpYNA254+Fb/A8atPK/G0NmbbUCEk07S7dKsaS5qWclk31HjfPF7c50QiUBRyM1OYQNUanDRnjJjhc8EcUqHKFo4c1livlJP7j0+eLYNyIJ8yEBewH1/svJNsE+NPkOwTQ2xFwkZJt5CeJ8ZEAPwpWtGtYNjsXWY/SjA1PXKdKjHE/QuQ9Jl5NBjV+N0JooYhY1JLrurWN/RdcdgDCIjQuFJsqSmqqi0IVP3p0clN+P7sWymvBD3jN8tfvdRcdi7whN+LCWiA5MRFLfGG5EJ9t4GnU4Jxj0U3q5lVoq5L5hObFLRt6miOPxsTVMXVa5jEqZKKxxdnMhm85ZSGAz+820b/uHMISjNS27SLtFOuaMHOSOnPGoNV8MS5DcCIq1n76SxjHwW/h8i1oWVZILE8joqxZM1yPG512n3arJhoas72LLIa97ZgFZ9SXkWkCBz6mU/7vZHVIhJKCxkSdDmiYhO9AunHrZrYce498WCmpScLh/VwWT112IQHwO+dIpSsGvB2OpXXZfpGNwbXqPZ2msqND260Qy3tlIR1SwOUqABJCENZhc=
   on:
