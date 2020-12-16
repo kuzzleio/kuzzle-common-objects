@@ -3,6 +3,8 @@
 
 # Kuzzle common objects
 
+[DEPRECATED] This project has been integrated inside Kuzzle core
+
 Common objects shared to various Kuzzle components and plugins.
 
 **Table of contents:**
